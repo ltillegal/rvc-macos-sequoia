@@ -37,10 +37,31 @@ Open http://127.0.0.1:7865 in your browser.
 
 ## Models
 
-- .pth files to assets/weights/
-- .index files to assets/indices/
+Model files are placed according to `.env`:
+
+- `.pth` files -> `weight_root` (default: `assets/weights/`)
+- `.index` files -> `index_root` (default: `logs/`)
+- external `.index` files -> `outside_index_root` (default: `assets/indices/`)
+
+Note: the inference tab reads `.index` files from `index_root` (`logs/`),
+not from `outside_index_root`. If you place an `.index` in `assets/indices/`,
+it will not show up in the dropdown on the main tab.
 
 Avoid Cyrillic or Chinese characters in file paths - FFmpeg will crash.
+
+### Installing models from a ZIP
+
+The inference tab has an **Install model from ZIP (.pth + .index)** panel.
+Select a ZIP archive containing a `.pth` file (and, optionally, an `.index`
+file) and click **Install**. The installer:
+
+- extracts the archive into a temporary directory,
+- copies any `.pth` file to `weight_root` (default: `assets/weights/`),
+- copies any `.index` file to `index_root` (default: `logs/`),
+- refreshes the model and index dropdowns automatically.
+
+Files are written atomically (temp file + rename), so an interrupted
+install will not leave a corrupted `.pth` or `.index`.
 
 ## Troubleshooting
 
