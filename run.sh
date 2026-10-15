@@ -20,15 +20,15 @@ if [ "$(uname)" = "Darwin" ]; then
   # Set locale to English
   export LANG=en_US.UTF-8
 
-  # 解决 faiss 与 PyTorch 的 OpenMP 库冲突问题
+  # Fix faiss and PyTorch OpenMP library conflict
   # Both libs ship their own libomp.dylib - conflict causes segfault
   export KMP_DUPLICATE_LIB_OK=TRUE
   # Limit OpenMP threads to reduce conflict risk
   export OMP_NUM_THREADS=1
 
-  echo "macOS 环境变量已设置 (MPS加速已启用, English UI)"
+  echo "macOS environment ready (MPS enabled, English UI)"
 elif [ "$(uname)" != "Linux" ]; then
-  echo "不支持的操作系统"
+  echo "Unsupported OS"
   exit 1
 fi
 
@@ -37,7 +37,7 @@ if [ -d ".venv" ]; then
   echo "Activating virtual environment......"
   . .venv/bin/activate
 else
-  echo "Error: virtual environment .venv 不存在！"
+  echo "Error: virtual environment .venv does not exist"
   echo "Create it first:"
   echo "  ${PYTHON_BIN:-/opt/homebrew/opt/python@3.9/bin/python3.9} -m venv .venv"
   echo "  source .venv/bin/activate"
@@ -53,7 +53,7 @@ if [ ! -f "assets/hubert/hubert_base.pt" ] || [ ! -f "assets/rmvpe/rmvpe.pt" ]; 
   ./tools/dlmodels.sh
   
   if [ $? -ne 0 ]; then
-    echo "Model download failed！"
+    echo "Model download failed"
     exit 1
   fi
 else

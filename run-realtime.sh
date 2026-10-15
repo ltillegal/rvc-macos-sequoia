@@ -20,9 +20,9 @@ if [ "$(uname)" = "Darwin" ]; then
   # Set locale to English
   export LANG=en_US.UTF-8
 
-  echo "macOS 环境变量已设置 (MPS加速已启用, English UI)"
+  echo "macOS environment ready (MPS enabled, English UI)"
 elif [ "$(uname)" != "Linux" ]; then
-  echo "不支持的操作系统"
+  echo "Unsupported OS"
   exit 1
 fi
 
@@ -31,7 +31,7 @@ if [ -d ".venv" ]; then
   echo "Activating virtual environment......"
   . .venv/bin/activate
 else
-  echo "Error: virtual environment .venv 不存在！"
+  echo "Error: virtual environment .venv does not exist"
   echo "Run ./run.sh first"
   exit 1
 fi
@@ -41,19 +41,19 @@ if ! python -c "import FreeSimpleGUI" 2>/dev/null; then
   echo "Installing FreeSimpleGUI..."
   pip install FreeSimpleGUI
   if [ $? -ne 0 ]; then
-    echo "FreeSimpleGUI install failed！"
+    echo "FreeSimpleGUI install failed"
     exit 1
   fi
 fi
 
 # Check if models exist
 if [ ! -f "assets/hubert/hubert_base.pt" ] || [ ! -f "assets/rmvpe/rmvpe.pt" ]; then
-  echo "Error: pretrained models missing！"
+  echo "Error: pretrained models missing"
   echo "Run ./run.sh first to download models"
   exit 1
 fi
 
 # Start realtime GUI
 echo "Starting RVC realtime GUI......"
-echo "Note: prepare your .pth 模型文件和 .index 索引文件"
+echo "Note: prepare your .pth model and .index file"
 python gui_v1.py
