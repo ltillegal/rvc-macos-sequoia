@@ -852,7 +852,6 @@ with gr.Blocks(title="RVC WebUI") as app:
                     zip_file = gr.File(
                         label=i18n("ZIP archive with .pth and optional .index"),
                         file_types=[".zip"],
-                        type="filepath",
                     )
                     install_btn = gr.Button(
                         i18n("Install"), variant="primary"
