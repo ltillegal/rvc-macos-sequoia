@@ -43,6 +43,7 @@ import traceback
 import threading
 import shutil
 import logging
+from tools.model_installer import install_model_from_zip
 
 
 logging.getLogger("numba").setLevel(logging.WARNING)
@@ -846,6 +847,21 @@ with gr.Blocks(title="RVC WebUI") as app:
                 clean_button.click(
                     fn=clean, inputs=[], outputs=[sid0], api_name="infer_clean"
                 )
+            with gr.Accordion(i18n("Install model from ZIP (.pth + .index)"), open=False):
+                with gr.Row():
+                    zip_file = gr.File(
+                        label=i18n("ZIP archive with .pth and optional .index"),
+                        file_types=[".zip"],
+                        type="filepath",
+                    )
+                    install_btn = gr.Button(
+                        i18n("Install"), variant="primary"
+                    )
+                install_status = gr.Textbox(
+                    label=i18n("Install status"),
+                    interactive=False,
+                    lines=2,
+                )
             with gr.TabItem(i18n("单次推理")):
                 with gr.Group():
                     with gr.Row():
@@ -942,6 +958,16 @@ with gr.Blocks(title="RVC WebUI") as app:
                                 inputs=[],
                                 outputs=[sid0, file_index2],
                                 api_name="infer_refresh",
+                            )
+                            install_btn.click(
+                                fn=install_model_from_zip,
+                                inputs=[zip_file],
+                                outputs=[install_status],
+                                api_name="infer_install_model",
+                            ).then(
+                                fn=change_choices,
+                                inputs=[],
+                                outputs=[sid0, file_index2],
                             )
                             # file_big_npy1 = gr.Textbox(
                             #     label=i18n("特征文件路径"),
