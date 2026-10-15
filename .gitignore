@@ -12,3 +12,10 @@ output/
 .DS_Store
 *.bak
 .env
+
+# Local backups and one-off scripts
+*.bak
+*.bak_before_ui
+insert_ui_block.py
+__pycache__/
+*.pyc
