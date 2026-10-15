@@ -10,3 +10,4 @@ assets/weights/*.index
 output/
 *.log
 .DS_Store
+*.bak
