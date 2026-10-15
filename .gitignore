@@ -1,0 +1,12 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+logs/
+assets/weights/*.pth
+assets/indices/*.index
+assets/weights/*.index
+output/
+*.log
+.DS_Store
