@@ -1,59 +1,59 @@
 #!/bin/sh
 
 # ============================================
-# RVC 实时变声 GUI 启动脚本
-# 适用于 Mac M芯片 (Apple Silicon)
+# RVC realtime voice changer launcher
+# For Mac Apple Silicon
 # ============================================
 
-# macOS 特定环境变量设置
+# macOS-specific environment variables
 if [ "$(uname)" = "Darwin" ]; then
   # PYTORCH_ENABLE_MPS_FALLBACK=1
-  # 当某些PyTorch操作在MPS(Metal Performance Shaders)上不支持时，
-  # 自动回退到CPU执行，避免程序崩溃
+  # When some PyTorch ops are unsupported on MPS,
+  # automatically fall back to CPU to avoid crashes
   export PYTORCH_ENABLE_MPS_FALLBACK=1
 
   # PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
-  # 禁用MPS设备的内存高水位限制，允许PyTorch使用更多GPU内存，
-  # 避免处理大模型或长音频时出现内存不足
+  # Disable MPS high watermark limit, allow more GPU memory,
+  # prevents OOM on large models or long audio
   export PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0
 
-  # 设置语言为简体中文
-  export LANG=zh_CN.UTF-8
+  # Set locale to English
+  export LANG=en_US.UTF-8
 
-  echo "macOS 环境变量已设置 (MPS加速已启用, 中文界面)"
+  echo "macOS 环境变量已设置 (MPS加速已启用, English UI)"
 elif [ "$(uname)" != "Linux" ]; then
   echo "不支持的操作系统"
   exit 1
 fi
 
-# 检查并激活虚拟环境
+# Check and activate virtual environment
 if [ -d ".venv" ]; then
-  echo "正在激活虚拟环境..."
+  echo "Activating virtual environment......"
   . .venv/bin/activate
 else
-  echo "错误: 虚拟环境 .venv 不存在！"
-  echo "请先运行 ./run.sh 配置环境"
+  echo "Error: virtual environment .venv 不存在！"
+  echo "Run ./run.sh first"
   exit 1
 fi
 
-# 检查并安装 FreeSimpleGUI 依赖
+# Check and install FreeSimpleGUI dependency
 if ! python -c "import FreeSimpleGUI" 2>/dev/null; then
-  echo "正在安装实时变声GUI所需依赖 FreeSimpleGUI..."
+  echo "Installing FreeSimpleGUI..."
   pip install FreeSimpleGUI
   if [ $? -ne 0 ]; then
-    echo "FreeSimpleGUI 安装失败！"
+    echo "FreeSimpleGUI install failed！"
     exit 1
   fi
 fi
 
-# 检查模型文件是否存在
+# Check if models exist
 if [ ! -f "assets/hubert/hubert_base.pt" ] || [ ! -f "assets/rmvpe/rmvpe.pt" ]; then
-  echo "错误: 预训练模型不存在！"
-  echo "请先运行 ./run.sh 下载模型"
+  echo "Error: pretrained models missing！"
+  echo "Run ./run.sh first to download models"
   exit 1
 fi
 
-# 启动实时变声 GUI
-echo "正在启动 RVC 实时变声 GUI..."
-echo "提示: 使用前请先准备好 .pth 模型文件和 .index 索引文件"
+# Start realtime GUI
+echo "Starting RVC realtime GUI......"
+echo "Note: prepare your .pth 模型文件和 .index 索引文件"
 python gui_v1.py

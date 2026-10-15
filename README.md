@@ -27,7 +27,7 @@ A fork of [qingbo1011/RVC-WebUI-MacOS](https://github.com/qingbo1011/RVC-WebUI-M
     pip install pip==24.0
     pip install -r requirements.txt
 
-    python web.py
+    python infer-web.py
 
 Open http://127.0.0.1:7865 in your browser.
 
