@@ -25,10 +25,15 @@ import gradio as gr
 # httpx 默认 read 超时仅 5 秒，长音频处理（30-40秒）会被中断导致前端报 Error。
 # 通过 monkey-patch 将默认超时改为无限制。
 import httpx
+
 _original_async_client_init = httpx.AsyncClient.__init__
+
+
 def _patched_async_client_init(self, *args, **kwargs):
     kwargs.setdefault("timeout", None)
     _original_async_client_init(self, *args, **kwargs)
+
+
 httpx.AsyncClient.__init__ = _patched_async_client_init
 
 import faiss
@@ -43,7 +48,6 @@ import traceback
 import threading
 import shutil
 import logging
-
 
 logging.getLogger("numba").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -959,24 +963,42 @@ with gr.Blocks(title="RVC WebUI") as app:
 
                         def vc_single_debug(*args):
                             import time, sys
-                            print(f"\n[DEBUG] vc_single called with {len(args)} args", flush=True)
+
+                            print(
+                                f"\n[DEBUG] vc_single called with {len(args)} args",
+                                flush=True,
+                            )
                             print(f"[DEBUG] audio_path={args[1]}", flush=True)
                             t0 = time.time()
                             try:
                                 result = vc.vc_single(*args)
                                 t1 = time.time()
-                                print(f"[DEBUG] vc_single completed in {t1-t0:.1f}s", flush=True)
+                                print(
+                                    f"[DEBUG] vc_single completed in {t1-t0:.1f}s",
+                                    flush=True,
+                                )
                                 info, audio = result
                                 if audio and audio[0] is not None:
-                                    print(f"[DEBUG] audio: sr={audio[0]}, shape={audio[1].shape}, dtype={audio[1].dtype}", flush=True)
+                                    print(
+                                        f"[DEBUG] audio: sr={audio[0]}, shape={audio[1].shape}, dtype={audio[1].dtype}",
+                                        flush=True,
+                                    )
                                 else:
-                                    print(f"[DEBUG] audio is None, info={info[:200]}", flush=True)
+                                    print(
+                                        f"[DEBUG] audio is None, info={info[:200]}",
+                                        flush=True,
+                                    )
                                 return result
                             except Exception as e:
                                 t1 = time.time()
                                 import traceback
+
                                 err = traceback.format_exc()
-                                print(f"\n[DEBUG ERROR] vc_single failed after {t1-t0:.1f}s:\n{err}", flush=True, file=sys.stderr)
+                                print(
+                                    f"\n[DEBUG ERROR] vc_single failed after {t1-t0:.1f}s:\n{err}",
+                                    flush=True,
+                                    file=sys.stderr,
+                                )
                                 return str(e), (None, None)
 
                         but0.click(
