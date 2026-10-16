@@ -17,6 +17,15 @@ from i18n.i18n import I18nAuto
 from configs.config import Config
 from sklearn.cluster import MiniBatchKMeans
 import torch, platform
+
+# torch>=2.6 changed the default of weights_only to True, which breaks
+# fairseq checkpoint loading: fairseq.data.dictionary.Dictionary is not in
+# the safe-globals allowlist. Force the old behaviour for torch.load calls.
+_original_torch_load = torch.load
+def _torch_load_compat(*args, **kwargs):
+    kwargs.setdefault("weights_only", False)
+    return _original_torch_load(*args, **kwargs)
+torch.load = _torch_load_compat
 import numpy as np
 import gradio as gr
 
