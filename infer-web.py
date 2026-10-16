@@ -1031,9 +1031,13 @@ with gr.Blocks(title="RVC WebUI") as app:
                             [vc_output1, vc_output2],
                             api_name="infer_convert",
                         )
-                        clear_btn = gr.ClearButton(
-                            components=[vc_output1, vc_output2],
-                            value=i18n("Clear output"),
+                        clear_btn = gr.Button(
+                            i18n("Clear output"), variant="secondary"
+                        )
+                        clear_btn.click(
+                            fn=lambda: (None, None),
+                            inputs=[],
+                            outputs=[vc_output1, vc_output2],
                         )
             with gr.TabItem(i18n("批量推理")):
                 gr.Markdown(
