@@ -73,18 +73,28 @@ def install_model_from_zip(zip_path):
         except zipfile.BadZipFile:
             return "Error: invalid ZIP file"
 
+        # Сначала собираем кандидатов, ничего не копируя на диск.
+        pth_files = []
+        index_files = []
         for root, _, files in os.walk(tmpdir):
             for f in files:
                 src = os.path.join(root, f)
                 if f.endswith(".pth"):
-                    _atomic_copy(src, weights_dir, f)
-                    extracted_pth.append(f)
+                    pth_files.append((src, f))
                 elif f.endswith(".index"):
-                    _atomic_copy(src, indices_dir, f)
-                    extracted_index.append(f)
+                    index_files.append((src, f))
 
-    if not extracted_pth:
-        return "Error: no .pth file found inside ZIP"
+        # Валидация до любой записи: при ошибке на диск ничего не попадает.
+        if not pth_files:
+            return "Error: no .pth file found inside ZIP"
+
+        # Копирование только после успешной валидации.
+        for src, f in pth_files:
+            _atomic_copy(src, weights_dir, f)
+            extracted_pth.append(f)
+        for src, f in index_files:
+            _atomic_copy(src, indices_dir, f)
+            extracted_index.append(f)
 
     msg = f"Installed model: {', '.join(extracted_pth)} -> {weights_dir}"
     if extracted_index:
