@@ -1,7 +1,7 @@
 # RVC-WebUI-MacOS — план и фактическое состояние
 
-Обновлено: 2026-10-31
-HEAD: 6b00767 (main, origin/main)
+Обновлено: 2026-11-03
+HEAD: 119e1fc (main, origin/main)
 Fork: https://github.com/ltillegal/rvc-macos-sequoia
 Локально: ~/RVC-WebUI-MacOS (Omarchy / Arch Linux)
 Target: macOS Sequoia, Apple Silicon
@@ -44,6 +44,10 @@ Target: macOS Sequoia, Apple Silicon
 
 ## Открытые задачи
 
+- [ ] Тест A: install_model_from_zip в изоляции (stdlib-only):
+      временный ZIP (.pth + .index), замоканные weight_root/index_root,
+      проверить раскладку (.pth → weight_root, .index → index_root,
+      не в assets/indices/), сохранение имён, атомарность (нет tmp-файлов).
 - [ ] End-to-end тест: реальный ZIP (.pth + .index) → Install → проверить,
       что модель появилась в dropdown и inference работает.
 - [ ] Проверить поведение на macOS Sequoia / Apple Silicon (текущая среда — Arch).
