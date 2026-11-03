@@ -40,14 +40,15 @@ Target: macOS Sequoia, Apple Silicon
   - `.index` → index_root  (default logs/)
   - outside_index_root (default assets/indices/) НЕ используется — change_choices() его не обходит
 - Запись атомарная: mkstemp в целевой папке + os.replace
-- Обрабатывает несколько .pth / .index в одном ZIP (копирует все)
+- Обрабатывает несколько .pth / .index в одном ZIP (копирует все), но
+  валидация «есть ли .pth» идёт ДО любой записи: при ошибке
+  на диск ничего не попадает (operation-level atomicity)
 
 ## Открытые задачи
 
-- [ ] Тест A: install_model_from_zip в изоляции (stdlib-only):
-      временный ZIP (.pth + .index), замоканные weight_root/index_root,
-      проверить раскладку (.pth → weight_root, .index → index_root,
-      не в assets/indices/), сохранение имён, атомарность (нет tmp-файлов).
+- [x] Тест A: install_model_from_zip в изоляции (stdlib-only) —
+      tests/test_installer_isolated.py, 11/11 ok. Выявил partial-write
+      при отсутствии .pth; исправлено (валидация до записи).
 - [ ] End-to-end тест: реальный ZIP (.pth + .index) → Install → проверить,
       что модель появилась в dropdown и inference работает.
 - [ ] Проверить поведение на macOS Sequoia / Apple Silicon (текущая среда — Arch).
