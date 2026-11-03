@@ -49,9 +49,15 @@ Target: macOS Sequoia, Apple Silicon
 - [x] Тест A: install_model_from_zip в изоляции (stdlib-only) —
       tests/test_installer_isolated.py, 11/11 ok. Выявил partial-write
       при отсутствии .pth; исправлено (валидация до записи).
-- [ ] End-to-end тест: реальный ZIP (.pth + .index) → Install → проверить,
-      что модель появилась в dropdown и inference работает.
-- [ ] Проверить поведение на macOS Sequoia / Apple Silicon (текущая среда — Arch).
+- [x] End-to-end тест: реальный ZIP (.pth + .index) → Install → проверить,
+      что модель появилась в dropdown и inference работает —
+      ПРОЙДЕНО на macOS Sequoia / Apple Silicon. Модель Roman_LT-RVC,
+      .pth → assets/weights, .index → logs, dropdown обновился,
+      vc_single отработал (sr=48000, npy/f0/infer ~10s).
+- [x] Проверить поведение на macOS Sequoia / Apple Silicon —
+      ПРОЙДЕНО. WebUI стартует, MPS используется, инференс работает.
+      Фикс: infer-web.py ставит дефолты путей через os.environ.setdefault
+      (единый источник истины с model_installer).
 - [x] (опционально) предупреждать, если в ZIP >1 .pth или >1 .index —
       РЕШЕНО: не требуется. Несколько моделей в одном ZIP — штатный
       сценарий (пакетная установка); статус-строка и так перечисляет
