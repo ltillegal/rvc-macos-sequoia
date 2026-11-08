@@ -139,6 +139,14 @@ English version: [README.md](README.md)
     pip install pip==24.0
     pip install -r requirements.txt
 
+### pyworld падает с `No module named 'pkg_resources'`
+
+В setuptools 82+ убрали `pkg_resources`, а `pyworld` его до сих пор импортирует. Поставьте более старый setuptools:
+
+    pip install "setuptools<80"
+
+В ноутбуке для Colab уже закреплён `setuptools==79.0.1`.
+
 ### Нет окружения venv
 
     /opt/homebrew/opt/python@3.9/bin/python3.9 -m venv .venv

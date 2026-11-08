@@ -139,6 +139,14 @@ install will not leave a corrupted `.pth` or `.index`.
     pip install pip==24.0
     pip install -r requirements.txt
 
+### pyworld fails: `No module named 'pkg_resources'`
+
+setuptools 82+ dropped `pkg_resources`, which `pyworld` still imports. Pin an older setuptools:
+
+    pip install "setuptools<80"
+
+The Colab notebook already pins `setuptools==79.0.1`.
+
 ### venv does not exist
 
     /opt/homebrew/opt/python@3.9/bin/python3.9 -m venv .venv
