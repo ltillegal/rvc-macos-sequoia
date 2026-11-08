@@ -1,6 +1,9 @@
 # RVC-WebUI-MacOS (Sequoia-ready fork)
 
-A fork of [qingbo1011/RVC-WebUI-MacOS](https://github.com/qingbo1011/RVC-WebUI-MacOS) with macOS Sequoia fixes and English UI by default.
+<p align="center">
+  <a href="README.md"><img src="https://img.shields.io/badge/English-2ea44f?style=flat-square" alt="English"></a>
+  <a href="README.ru.md"><img src="https://img.shields.io/badge/%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-6e7781?style=flat-square" alt="Русский"></a>
+</p>
 
 <p align="center">
   <a href="https://www.paypal.com/donate/?business=0eskimo0%40gmail.com&no_recurring=0&item_name=Support+RVC-WebUI-MacOS&currency_code=USD">
@@ -8,7 +11,9 @@ A fork of [qingbo1011/RVC-WebUI-MacOS](https://github.com/qingbo1011/RVC-WebUI-M
   </a>
 </p>
 
-Support the project / Поддержать проект: [PayPal](https://www.paypal.com/donate/?business=0eskimo0%40gmail.com&no_recurring=0&item_name=Support+RVC-WebUI-MacOS&currency_code=USD)
+A fork of [qingbo1011/RVC-WebUI-MacOS](https://github.com/qingbo1011/RVC-WebUI-MacOS) with macOS Sequoia fixes and English UI by default.
+
+Russian version: [README.ru.md](README.ru.md)
 
 ## What's fixed in this fork
 
@@ -43,76 +48,61 @@ Open http://127.0.0.1:7865 in your browser.
 
     ./run-realtime.sh
 
-## Training a model in Google Colab / Обучение модели в Google Colab
+## Training a model in Google Colab
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ltillegal/rvc-macos-sequoia/blob/main/colab/train-rvc-colab.ipynb)
 
-Train an RVC v2 voice model on a free Colab GPU, then install the result here with the ZIP installer.
+`colab/train-rvc-colab.ipynb` trains an **RVC v2, 48 kHz, F0-conditioned** voice model on a free Colab GPU and puts the finished `.pth` + `.index` back on your Google Drive. The result installs here with the ZIP installer. The notebook itself is bilingual (English / Russian).
 
-Обучите голосовую модель RVC v2 на бесплатном GPU в Colab и установите результат здесь через ZIP-установщик.
-
-### Dataset / Датасет
+### Dataset
 
 - 10–30 minutes of clean speech from one speaker is the practical sweet spot. 4 minutes works, but the timbre will be less stable.
 - No music, echo, second voice, or clipping. Even level. WAV / MP3 / FLAC / M4A / OGG are accepted.
+- One long file is fine - preprocessing slices it into 3.7 s windows automatically.
 - Do not over-denoise: aggressive cleanup is learned by the model and shows up as a metallic voice.
-- 10–30 минут чистой речи одного человека — оптимум. 4 минуты тоже обучатся, но тембр будет менее стабильным. Без музыки, эха, второго голоса и клиппинга. Агрессивный денойз вредит: модель выучит «металл».
 
-Put the files here / положите файлы сюда:
+Put the files here:
 
     MyDrive/rvc/mymodel/dataset/
 
-Results are written to / результаты появятся в:
+Results are written to:
 
     MyDrive/rvc/mymodel/out/
 
 `mymodel` is only a default name: change it to anything you like (Latin, no spaces). It becomes the experiment folder and the prefix of the output `.pth`.
 
-`mymodel` — только имя по умолчанию: можно поставить любое (латиница, без пробелов). Оно станет именем эксперимента и префиксом готовых `.pth`.
+### What the notebook does
 
-### What the notebook does / Что делает ноутбук
-
-1. Creates a Python 3.11 environment with `uv`, installs PyTorch 2.4.1 (CUDA 12.1), `fairseq` (C++17 build), `faiss`, `rmvpe` dependencies.
+1. Creates a Python 3.11 environment with `uv`, installs PyTorch 2.4.1 (CUDA 12.1), `fairseq` (C++17 build), `faiss`, and the RMVPE dependencies.
 2. Clones this repository and downloads `hubert_base.pt`, `rmvpe.pt`, and the 48 kHz F0 pretrained weights.
 3. Preprocesses the dataset: high-pass, slice into 3.7 s windows, normalize.
 4. Extracts F0 with RMVPE and HuBERT features (768 for v2).
 5. Trains `v2 48k f0 1` with 200 epochs, saving an inference-ready `.pth` every 25 epochs.
 6. Builds the faiss `.index` and copies `.pth` + `.index` to your Drive.
 
-1. Создаёт окружение Python 3.11, ставит PyTorch, `fairseq` (сборка C++17), `faiss` и зависимости RMVPE.
-2. Клонирует репозиторий и скачивает `hubert_base.pt`, `rmvpe.pt` и претрейн 48 кГц с F0.
-3. Готовит датасет: high-pass, нарезка на окна 3.7 с, нормализация.
-4. Извлекает F0 (RMVPE) и признаки HuBERT (768 для v2).
-5. Обучает `v2 48k f0 1`, 200 эпох, готовый `.pth` каждые 25 эпох.
-6. Строит индекс faiss и складывает `.pth` + `.index` на Drive.
-
-### Settings / Настройки
+### Settings
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
-| `SAMPLE_RATE` | `48k` | 48 kHz v2 is recommended; 40k/32k fall back to v1 / рекомендуется 48k |
+| `EXPERIMENT` | `mymodel` | name of the experiment / output files |
+| `SAMPLE_RATE` | `48k` | 48 kHz v2 is recommended; 40k/32k fall back to v1 |
 | `TOTAL_EPOCHS` | `200` | 10–30 min of audio; use 100 for < 5 min |
 | `SAVE_EVERY` | `25` | also writes a ready-to-use model each 25 epochs |
 | `BATCH_SIZE` | `8` | lower to 6 or 4 on `CUDA out of memory` |
 
-### Time and resume / Время и продолжение
+### Time and resume
 
 - Preprocessing: ~10–20 min. Training: ~40–90 min for 200 epochs on a free T4.
 - Checkpoints are mirrored to `out/checkpoints/` every 5 minutes.
 - If Colab disconnects, reconnect and run the notebook from the top: preprocessing is redone and training resumes from the mirrored checkpoints (`G_*.pth` / `D_*.pth`).
-- Подготовка ~10–20 мин, обучение ~40–90 мин на T4. Чекпоинты копируются на Drive каждые 5 минут. После обрыва запустите ноутбук заново — обучение продолжится с последнего чекпоинта.
 
-### After training / После обучения
+### After training
 
 1. Download the `.pth` you like and the `.index` from `out/`.
 2. Zip them together and install with **Install model from ZIP (.pth + .index)**, or copy the `.pth` to `assets/weights/` and the `.index` to `logs/`.
 3. Inference for speech: F0 method `rmvpe`, pitch `0` (±12 for gender change), index rate `0.5–0.75`, protect `0.33`, RMS mix `0.25`.
 
-Скачайте `.pth` и `.index` из `out/`, упакуйте в ZIP и установите через ZIP-установщик. Для речи: `rmvpe`, pitch `0`, index rate `0.5–0.75`, protect `0.33`, RMS mix `0.25`.
-
 > **RVC and Seed-VC are different architectures.** An RVC `.pth` does not load in Seed-VC, and a Seed-VC checkpoint does not load here.
->
-> **RVC и Seed-VC — разные архитектуры.** RVC-модель не открывается в Seed-VC, и наоборот.
 
 ## Models
 
@@ -166,9 +156,9 @@ Check i18n/i18n.py - I18nAuto.__init__ should auto-detect locale and fall back t
     git fetch upstream
     git merge upstream/main
 
-## Support the project / Поддержать проект
+## Support the project
 
-If this fork saves you time, you can buy me a coffee / если форк сэкономил вам время:
+If this fork saves you time, you can buy me a coffee:
 
 <p>
   <a href="https://www.paypal.com/donate/?business=0eskimo0%40gmail.com&no_recurring=0&item_name=Support+RVC-WebUI-MacOS&currency_code=USD">
