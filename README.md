@@ -60,11 +60,15 @@ Train an RVC v2 voice model on a free Colab GPU, then install the result here wi
 
 Put the files here / положите файлы сюда:
 
-    MyDrive/rvc/Roman_lt/dataset/
+    MyDrive/rvc/mymodel/dataset/
 
 Results are written to / результаты появятся в:
 
-    MyDrive/rvc/Roman_lt/out/
+    MyDrive/rvc/mymodel/out/
+
+`mymodel` is only a default name: change it to anything you like (Latin, no spaces). It becomes the experiment folder and the prefix of the output `.pth`.
+
+`mymodel` — только имя по умолчанию: можно поставить любое (латиница, без пробелов). Оно станет именем эксперимента и префиксом готовых `.pth`.
 
 ### What the notebook does / Что делает ноутбук
 
