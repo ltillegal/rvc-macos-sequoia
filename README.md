@@ -58,7 +58,7 @@ Open http://127.0.0.1:7865 in your browser.
 
 - 10–30 minutes of clean speech from one speaker is the practical sweet spot. 4 minutes works, but the timbre will be less stable.
 - No music, echo, second voice, or clipping. Even level. WAV / MP3 / FLAC / M4A / OGG are accepted.
-- One long file is fine - preprocessing slices it into 3.7 s windows automatically.
+- One long file is fine: the notebook converts it to mono 48 kHz and splits it into 10-minute parts with ffmpeg, then preprocessing slices those into 3.7 s windows.
 - Do not over-denoise: aggressive cleanup is learned by the model and shows up as a metallic voice.
 
 Put the files here:
@@ -75,10 +75,11 @@ Results are written to:
 
 1. Creates a Python 3.11 environment with `uv`, installs PyTorch 2.4.1 (CUDA 12.1), `fairseq` (C++17 build), `faiss`, and the RMVPE dependencies.
 2. Clones this repository and downloads `hubert_base.pt`, `rmvpe.pt`, and the 48 kHz F0 pretrained weights.
-3. Preprocesses the dataset: high-pass, slice into 3.7 s windows, normalize.
-4. Extracts F0 with RMVPE and HuBERT features (768 for v2).
-5. Trains `v2 48k f0 1` with 200 epochs, saving an inference-ready `.pth` every 25 epochs.
-6. Builds the faiss `.index` and copies `.pth` + `.index` to your Drive.
+3. Normalizes the dataset with ffmpeg: mono 48 kHz, split into 10-minute parts (keeps RAM flat, so a multi-hour file cannot crash the runtime).
+4. Preprocesses it: high-pass, slice into 3.7 s windows, normalize.
+5. Extracts F0 with RMVPE and HuBERT features (768 for v2).
+6. Trains `v2 48k f0 1` with 200 epochs, saving an inference-ready `.pth` every 25 epochs.
+7. Builds the faiss `.index` and copies `.pth` + `.index` to your Drive.
 
 ### Settings
 
@@ -133,6 +134,10 @@ Files are written atomically (temp file + rename), so an interrupted
 install will not leave a corrupted `.pth` or `.index`.
 
 ## Troubleshooting
+
+### Session crashes during preprocessing (`using all available RAM`)
+
+RVC decodes a whole audio file into memory before slicing it. A multi-hour file can exhaust the Colab runtime. Cell 6b converts everything to mono 48 kHz and splits it into 10-minute parts first - run cells 6, 6b, then 7. For an extremely long file lower `SEGMENT_SECONDS` to 300.
 
 ### fairseq / omegaconf dependency conflict
 
