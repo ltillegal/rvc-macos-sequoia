@@ -95,7 +95,7 @@ Results are written to:
 
 - Preprocessing: ~10–20 min. Training: ~40–90 min for 200 epochs on a free T4.
 - Checkpoints are mirrored to `out/checkpoints/` every 5 minutes.
-- If Colab disconnects, reconnect and run the notebook from the top: preprocessing is redone and training resumes from the mirrored checkpoints (`G_*.pth` / `D_*.pth`).
+- If Colab disconnects, click **Reconnect** and then **Runtime → Run all**: dependencies are reinstalled, preprocessing is redone (1-3 min) and training resumes from the mirrored checkpoints (`G_*.pth` / `D_*.pth`). Nothing already trained is lost.
 
 ### After training
 
