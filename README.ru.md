@@ -105,6 +105,39 @@ English version: [README.md](README.md)
 
 > **RVC и Seed-VC — разные архитектуры.** RVC-модель не открывается в Seed-VC, и наоборот.
 
+## Обучение модели в Kaggle
+
+[![Open In Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://raw.githubusercontent.com/ltillegal/rvc-macos-sequoia/main/colab/train-rvc-kaggle.ipynb)
+
+Ноутбук `colab/train-rvc-kaggle.ipynb` — тот же пайплайн, что и в Colab, но под Kaggle. Он обучает **RVC v2, 48 кГц, с F0** на бесплатном GPU в Kaggle и складывает готовые `.pth` + `.index` в `/kaggle/working`, откуда они скачиваются на вкладке **Output**. Для долгого обучения Kaggle удобнее: бесплатный аккаунт даёт ~30 GPU-часов в неделю, сессия живёт до 12 часов, а **Save & Run All (Commit)** продолжает обучение после закрытия браузера.
+
+### Подготовка
+
+1. **Settings → Accelerator → GPU T4 x2** (P100 тоже работает) и **Settings → Internet → On**. Без интернета ячейка установки не сможет ничего скачать.
+2. Загрузите аудио как **приватный Kaggle Dataset**: *Datasets → New Dataset → перетащите файлы → Create*. Один длинный файл — нормально.
+3. В ноутбуке нажмите **Add Input → Your Datasets →** этот датасет. Он монтируется только для чтения в `/kaggle/input/<имя>`, а аудио ноутбук находит сам — имя датасета нигде вводить не нужно.
+4. Запустите ноутбук. Для первой попытки — **Run all**, для реального обучения — **Save Version → Save & Run All (Commit)**.
+
+### Чем отличается от ноутбука для Colab
+
+| | Colab | Kaggle |
+| --- | --- | --- |
+| Датасет | Google Drive (`/content/drive/MyDrive/rvc`) | Kaggle Dataset в `/kaggle/input` |
+| Рабочая папка | `/content/rvc` | `/kaggle/temp/rvc` (не сохраняется, ~20 ГБ) |
+| Результат | копируется обратно на Drive | `/kaggle/working/rvc/<имя>` + `<имя>_model.zip` |
+| Долгие запуски | вкладка браузера должна быть открыта (на free) | **Save & Run All (Commit)**, до 12 часов без браузера |
+
+Всё остальное одинаково: те же настройки (`EXPERIMENT`, `48k`, 200 эпох, `BATCH_SIZE 8`), та же нарезка длинных файлов на 10-минутные части и те же двуязычные ячейки.
+
+### После обучения
+
+1. Откройте вкладку **Output** ноутбука (или завершённой версии) и скачайте `rvc/<имя>_model.zip`. Отдельные `.pth` и `.index` лежат рядом в `rvc/<имя>/`.
+2. Установите ZIP через **Install model from ZIP (.pth + .index)**, либо скопируйте `.pth` в `assets/weights/`, а `.index` в `logs/`.
+
+Настройки инференса те же: F0 `rmvpe`, pitch `0`, index rate `0.5–0.75`, protect `0.33`, RMS mix `0.25`.
+
+> **Сессию убило?** Запустите ячейки 1–14 заново. Обучение продолжится с `/kaggle/working/rvc/<имя>/checkpoints`, если версия сохранялась, иначе с претрейна.
+
 ## Модели
 
 Файлы моделей раскладываются согласно `.env`:

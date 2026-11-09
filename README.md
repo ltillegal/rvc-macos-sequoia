@@ -105,6 +105,39 @@ Results are written to:
 
 > **RVC and Seed-VC are different architectures.** An RVC `.pth` does not load in Seed-VC, and a Seed-VC checkpoint does not load here.
 
+## Training a model in Kaggle
+
+[![Open In Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://raw.githubusercontent.com/ltillegal/rvc-macos-sequoia/main/colab/train-rvc-kaggle.ipynb)
+
+`colab/train-rvc-kaggle.ipynb` is the same pipeline as the Colab notebook, adapted to Kaggle. It trains **RVC v2, 48 kHz, F0-conditioned** on a free Kaggle GPU and leaves the finished `.pth` + `.index` in `/kaggle/working`, where you download them from the **Output** tab. Kaggle is the better choice for long runs: a free account gets ~30 GPU-hours per week and a session can live up to 12 hours, and **Save & Run All (Commit)** keeps training after you close the browser.
+
+### Setup
+
+1. **Settings → Accelerator → GPU T4 x2** (P100 also works) and **Settings → Internet → On**. Without internet the install cell cannot run.
+2. Upload the audio as a **private Kaggle Dataset**: *Datasets → New Dataset → drag the files → Create*. One long file is fine.
+3. In the notebook click **Add Input → Your Datasets →** that dataset. It is mounted read-only at `/kaggle/input/<name>`, and the notebook finds the audio itself - the dataset name does not have to be typed anywhere.
+4. Run the notebook. Use **Run all** for a first try, or **Save Version → Save & Run All (Commit)** for real training.
+
+### How it differs from the Colab notebook
+
+| | Colab | Kaggle |
+| --- | --- | --- |
+| Dataset | Google Drive (`/content/drive/MyDrive/rvc`) | a Kaggle Dataset mounted at `/kaggle/input` |
+| Scratch space | `/content/rvc` | `/kaggle/temp/rvc` (not saved, ~20 GB) |
+| Output | copied back to Drive | `/kaggle/working/rvc/<name>` + `<name>_model.zip` |
+| Long runs | browser tab must stay open (free) | **Save & Run All (Commit)**, up to 12 hours headless |
+
+Everything else is identical: the same settings (`EXPERIMENT`, `48k`, 200 epochs, `BATCH_SIZE 8`), the same 10-minute splitting of long files, and the same bilingual cells.
+
+### After training
+
+1. Open the **Output** tab of the notebook (or of the finished version) and download `rvc/<name>_model.zip`. The separate `.pth` and `.index` are next to it in `rvc/<name>/`.
+2. Install the ZIP with **Install model from ZIP (.pth + .index)**, or copy the `.pth` to `assets/weights/` and the `.index` to `logs/`.
+
+Inference settings are the same as above: F0 method `rmvpe`, pitch `0`, index rate `0.5–0.75`, protect `0.33`, RMS mix `0.25`.
+
+> **Session killed?** Re-run cells 1-14. Training resumes from `/kaggle/working/rvc/<name>/checkpoints` if a version was saved, otherwise from the pretrained model.
+
 ## Models
 
 Model files are placed according to `.env`:
