@@ -107,7 +107,9 @@ English version: [README.md](README.md)
 
 ## Обучение модели в Kaggle
 
-[![Open In Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://raw.githubusercontent.com/ltillegal/rvc-macos-sequoia/main/colab/train-rvc-kaggle.ipynb)
+[![Open In Kaggle](https://www.kaggle.com/static/images/open-in-kaggle.svg)](https://www.kaggle.com/notebooks/welcome?src=https%3A%2F%2Fraw.githubusercontent.com%2Fltillegal%2Frvc-macos-sequoia%2Fmain%2Fcolab%2Ftrain-rvc-kaggle.ipynb)
+
+> Кнопка открывает копию ноутбука в вашем аккаунте Kaggle и требует входа. Если она не открывается — в Kaggle нажмите **File → Import Notebook → GitHub** и вставьте `https://github.com/ltillegal/rvc-macos-sequoia/blob/main/colab/train-rvc-kaggle.ipynb`.
 
 Ноутбук `colab/train-rvc-kaggle.ipynb` — тот же пайплайн, что и в Colab, но под Kaggle. Он обучает **RVC v2, 48 кГц, с F0** на бесплатном GPU в Kaggle и складывает готовые `.pth` + `.index` в `/kaggle/working`, откуда они скачиваются на вкладке **Output**. Для долгого обучения Kaggle удобнее: бесплатный аккаунт даёт ~30 GPU-часов в неделю, сессия живёт до 12 часов, а **Save & Run All (Commit)** продолжает обучение после закрытия браузера.
 

@@ -107,7 +107,9 @@ Results are written to:
 
 ## Training a model in Kaggle
 
-[![Open In Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)](https://kaggle.com/kernels/welcome?src=https://raw.githubusercontent.com/ltillegal/rvc-macos-sequoia/main/colab/train-rvc-kaggle.ipynb)
+[![Open In Kaggle](https://www.kaggle.com/static/images/open-in-kaggle.svg)](https://www.kaggle.com/notebooks/welcome?src=https%3A%2F%2Fraw.githubusercontent.com%2Fltillegal%2Frvc-macos-sequoia%2Fmain%2Fcolab%2Ftrain-rvc-kaggle.ipynb)
+
+> The badge opens a copy of the notebook in your Kaggle account and requires being signed in. If it does not open, use **File → Import Notebook → GitHub** in Kaggle and paste `https://github.com/ltillegal/rvc-macos-sequoia/blob/main/colab/train-rvc-kaggle.ipynb`.
 
 `colab/train-rvc-kaggle.ipynb` is the same pipeline as the Colab notebook, adapted to Kaggle. It trains **RVC v2, 48 kHz, F0-conditioned** on a free Kaggle GPU and leaves the finished `.pth` + `.index` in `/kaggle/working`, where you download them from the **Output** tab. Kaggle is the better choice for long runs: a free account gets ~30 GPU-hours per week and a session can live up to 12 hours, and **Save & Run All (Commit)** keeps training after you close the browser.
 
