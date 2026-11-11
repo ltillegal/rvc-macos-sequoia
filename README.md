@@ -194,6 +194,20 @@ The Colab notebook already pins `setuptools==79.0.1`.
     pip install pip==24.0
     pip install -r requirements.txt
 
+### Inference crashes with `segmentation fault` (`Loading rmvpe model`)
+
+Symptom: the first conversion dies right after `Loading rmvpe model,assets/rmvpe/rmvpe.pt` with `[1] ... segmentation fault python infer-web.py` and a leaked-semaphore warning on exit. The pitch extractor (RMVPE) is unstable on the Apple Silicon MPS backend. This fork now loads RMVPE on the CPU and keeps the rest of the pipeline on MPS, so no extra steps are needed beyond updating.
+
+If it still crashes, force the whole pipeline to the CPU:
+
+    export RVC_DEVICE=cpu
+    export MPLBACKEND=Agg
+    export OMP_NUM_THREADS=1
+    export MKL_NUM_THREADS=1
+    python infer-web.py
+
+CPU conversion is slower and produces the same audio. `RVC_DEVICE` is read once at startup, so restart the WebUI after changing it.
+
 ### UI still shows Chinese
 
 Check i18n/i18n.py - I18nAuto.__init__ should auto-detect locale and fall back to en_US.

@@ -194,6 +194,20 @@ RVC декодирует аудиофайл целиком в память пе�
     pip install pip==24.0
     pip install -r requirements.txt
 
+### Конвертация падает с `segmentation fault` (`Loading rmvpe model`)
+
+Симптом: первая же конвертация умирает сразу после `Loading rmvpe model,assets/rmvpe/rmvpe.pt` с `[1] ... segmentation fault python infer-web.py` и предупреждением про утёкший семафор при выходе. Экстрактор высоты тона (RMVPE) нестабилен на бэкенде MPS у Apple Silicon. Теперь форк грузит RMVPE на CPU, а остальной пайплайн оставляет на MPS — достаточно обновить репозиторий, ничего настраивать не нужно.
+
+Если всё равно падает, переведите на CPU весь пайплайн:
+
+    export RVC_DEVICE=cpu
+    export MPLBACKEND=Agg
+    export OMP_NUM_THREADS=1
+    export MKL_NUM_THREADS=1
+    python infer-web.py
+
+На CPU конвертация медленнее, звук получается тот же. `RVC_DEVICE` читается один раз при старте, поэтому после изменения перезапустите WebUI.
+
 ### Интерфейс всё ещё на китайском
 
 Проверьте `i18n/i18n.py` — `I18nAuto.__init__` должен определять локаль и откатываться на `en_US`.

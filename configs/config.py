@@ -110,6 +110,11 @@ class Config:
     # check `getattr` and try it for compatibility
     @staticmethod
     def has_mps() -> bool:
+        # RVC_DEVICE=cpu is an escape hatch for macOS, where the MPS backend
+        # can crash with a SIGSEGV (or abort on unsupported ops). Everything
+        # else keeps using MPS by default.
+        if os.environ.get("RVC_DEVICE", "").strip().lower() == "cpu":
+            return False
         if not torch.backends.mps.is_available():
             return False
         try:

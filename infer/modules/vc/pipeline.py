@@ -146,10 +146,17 @@ class Pipeline(object):
                 logger.info(
                     "Loading rmvpe model,%s" % "%s/rmvpe.pt" % os.environ["rmvpe_root"]
                 )
+                # RMVPE segfaults on Apple Silicon MPS in this fork (SIGSEGV right
+                # after "Loading rmvpe model"). Keep the rest of the pipeline on
+                # MPS and run only the pitch extractor on the CPU - it is fast
+                # enough and completely stable there.
+                rmvpe_device = "cpu" if "mps" in str(self.device) else self.device
+                if rmvpe_device != self.device:
+                    logger.info("RMVPE on CPU (MPS is unstable for f0 here)")
                 self.model_rmvpe = RMVPE(
                     "%s/rmvpe.pt" % os.environ["rmvpe_root"],
                     is_half=self.is_half,
-                    device=self.device,
+                    device=rmvpe_device,
                 )
             f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
 
