@@ -640,7 +640,7 @@ def click_train(
     logger.info("Execute: " + cmd)
     p = Popen(cmd, shell=True, cwd=now_dir)
     p.wait()
-    return "训练结束, 您可查看控制台训练日志或实验文件夹下的train.log"
+    return i18n("训练结束, 您可查看控制台训练日志或实验文件夹下的train.log")
 
 
 # but4.click(train_index, [exp_dir1], info3)
@@ -654,10 +654,10 @@ def train_index(exp_dir1, version19):
         else "%s/3_feature768" % (exp_dir)
     )
     if not os.path.exists(feature_dir):
-        return "请先进行特征提取!"
+        return i18n("请先进行特征提取!")
     listdir_res = list(os.listdir(feature_dir))
     if len(listdir_res) == 0:
-        return "请先进行特征提取！"
+        return i18n("请先进行特征提取！")
     infos = []
     npys = []
     for name in sorted(listdir_res):
@@ -715,7 +715,7 @@ def train_index(exp_dir1, version19):
         % (exp_dir, n_ivf, index_ivf.nprobe, exp_dir1, version19),
     )
     infos.append(
-        "成功构建索引 added_IVF%s_Flat_nprobe_%s_%s_%s.index"
+        i18n("成功构建索引 added_IVF%s_Flat_nprobe_%s_%s_%s.index")
         % (n_ivf, index_ivf.nprobe, exp_dir1, version19)
     )
     try:
@@ -733,9 +733,9 @@ def train_index(exp_dir1, version19):
                 version19,
             ),
         )
-        infos.append("链接索引到外部-%s" % (outside_index_root))
+        infos.append(i18n("链接索引到外部-%s") % (outside_index_root))
     except:
-        infos.append("链接索引到外部-%s失败" % (outside_index_root))
+        infos.append(i18n("链接索引到外部-%s失败") % (outside_index_root))
 
     # faiss.write_index(index, '%s/added_IVF%s_Flat_FastScan_%s.index'%(exp_dir,n_ivf,version19))
     # infos.append("成功构建索引，added_IVF%s_Flat_FastScan_%s.index"%(n_ivf,version19))
@@ -1237,7 +1237,7 @@ with gr.Blocks(title="RVC WebUI") as app:
                             minimum=0,
                             maximum=20,
                             step=1,
-                            label="人声提取激进程度",
+                            label=i18n("人声提取激进程度"),
                             value=10,
                             interactive=True,
                             visible=False,  # 先不开放调整

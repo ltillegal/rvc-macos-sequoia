@@ -133,5 +133,17 @@
     "音调设置": "音调设置",
     "音频设备": "音频设备",
     "音高算法": "音高算法",
-    "额外推理时长": "额外推理时长"
+    "额外推理时长": "额外推理时长",
+    "请先进行特征提取!": "请先进行特征提取!",
+    "请先进行特征提取！": "请先进行特征提取！",
+    "成功构建索引 added_IVF%s_Flat_nprobe_%s_%s_%s.index": "成功构建索引 added_IVF%s_Flat_nprobe_%s_%s_%s.index",
+    "链接索引到外部-%s": "链接索引到外部-%s",
+    "链接索引到外部-%s失败": "链接索引到外部-%s失败",
+    "人声提取激进程度": "人声提取激进程度",
+    "Clear output": "清除输出",
+    "Input audio file": "输入音频文件",
+    "Install": "安装",
+    "Install model from ZIP (.pth + .index)": "从ZIP安装模型(.pth + .index)",
+    "Install status": "安装状态",
+    "ZIP archive with .pth and optional .index": "包含.pth和可选.index的ZIP压缩包"
 }
