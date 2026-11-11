@@ -8,6 +8,7 @@ assets/weights/*.pth
 assets/indices/*.index
 assets/weights/*.index
 output/
+opt/
 *.log
 .DS_Store
 *.bak
