@@ -159,6 +159,7 @@ class Pipeline(object):
                     device=rmvpe_device,
                 )
             f0 = self.model_rmvpe.infer_from_audio(x, thred=0.03)
+            logger.info("rmvpe: f0 extracted (%d frames)", len(f0))
 
             if "privateuseone" in str(self.device):  # clean ortruntime memory
                 del self.model_rmvpe.model
@@ -340,6 +341,9 @@ class Pipeline(object):
                 )
         s = 0
         audio_opt = []
+        logger.info(
+            "inference: %d chunk(s), device=%s", len(opt_ts) + 1, self.device
+        )
         t = None
         t1 = ttime()
         audio_pad = np.pad(audio, (self.t_pad, self.t_pad), mode="reflect")
@@ -377,6 +381,7 @@ class Pipeline(object):
         times[1] += t2 - t1
         for t in opt_ts:
             t = t // self.window * self.window
+            logger.info("inference: chunk %d/%d", len(audio_opt) + 1, len(opt_ts) + 1)
             if if_f0 == 1:
                 audio_opt.append(
                     self.vc(
@@ -446,6 +451,7 @@ class Pipeline(object):
                     protect,
                 )[self.t_pad_tgt : -self.t_pad_tgt]
             )
+        logger.info("inference: chunks done, post-processing")
         audio_opt = np.concatenate(audio_opt)
         if rms_mix_rate != 1:
             audio_opt = change_rms(audio, 16000, audio_opt, tgt_sr, rms_mix_rate)

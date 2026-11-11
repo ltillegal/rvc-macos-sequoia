@@ -565,6 +565,7 @@ class RMVPE:
             self.model = self.model.to(device)
         cents_mapping = 20 * np.arange(360) + 1997.3794084376191
         self.cents_mapping = np.pad(cents_mapping, (4, 4))  # 368
+        logger.info("rmvpe: model ready on %s (half=%s)", self.device, is_half)
 
     def mel2hidden(self, mel):
         with torch.no_grad():
@@ -599,10 +600,12 @@ class RMVPE:
         mel = self.mel_extractor(
             audio.float().to(self.device).unsqueeze(0), center=True
         )
+        logger.info("rmvpe: mel %s on %s", tuple(mel.shape), mel.device)
         # print(123123123,mel.device.type)
         # torch.cuda.synchronize()
         # t1 = ttime()
         hidden = self.mel2hidden(mel)
+        logger.info("rmvpe: hidden %s", tuple(hidden.shape))
         # torch.cuda.synchronize()
         # t2 = ttime()
         # print(234234,hidden.device.type)
@@ -614,6 +617,7 @@ class RMVPE:
             hidden = hidden.astype("float32")
 
         f0 = self.decode(hidden, thred=thred)
+        logger.info("rmvpe: decoded (%d frames)", len(f0))
         # torch.cuda.synchronize()
         # t3 = ttime()
         # print("hmvpe:%s\t%s\t%s\t%s"%(t1-t0,t2-t1,t3-t2,t3-t0))
