@@ -122,6 +122,7 @@
     "输出设备": "Output device",
     "输出降噪": "Output noise reduction",
     "输出音频(右下角三个点,点了可以下载)": "Export audio (click on the three dots in the lower right corner to download)",
+    "Download result (.wav)": "Download result (.wav)",
     "选择.index文件": "Select the .index file",
     "选择.pth文件": "Select the .pth file",
     "选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU": "选择音高提取算法,输入歌声可用pm提速,harvest低音好但巨慢无比,crepe效果好但吃GPU",

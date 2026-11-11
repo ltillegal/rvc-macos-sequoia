@@ -28,6 +28,7 @@ def _torch_load_compat(*args, **kwargs):
 torch.load = _torch_load_compat
 import numpy as np
 import gradio as gr
+import soundfile as sf
 
 # 修复 Gradio queue 模式下长音频处理超时问题
 # Gradio 内部使用 httpx.AsyncClient 发 POST 请求调用 api/predict，
@@ -996,12 +997,17 @@ with gr.Blocks(title="RVC WebUI") as app:
                             vc_output2 = gr.Audio(
                                 label=i18n("输出音频(右下角三个点,点了可以下载)")
                             )
+                            vc_output_file = gr.File(
+                                label=i18n("Download result (.wav)"),
+                                interactive=False,
+                            )
 
                         def vc_single_debug(*args):
                             import time, sys
                             print(f"\n[DEBUG] vc_single called with {len(args)} args", flush=True)
                             print(f"[DEBUG] audio_path={args[1]}", flush=True)
                             t0 = time.time()
+                            out_path = None
                             try:
                                 result = vc.vc_single(*args)
                                 t1 = time.time()
@@ -1009,15 +1015,29 @@ with gr.Blocks(title="RVC WebUI") as app:
                                 info, audio = result
                                 if audio and audio[0] is not None:
                                     print(f"[DEBUG] audio: sr={audio[0]}, shape={audio[1].shape}, dtype={audio[1].dtype}", flush=True)
+                                    # Write a real file so the result can be downloaded
+                                    # even when the gradio audio player shows no menu.
+                                    out_dir = os.path.abspath("opt")
+                                    os.makedirs(out_dir, exist_ok=True)
+                                    out_path = os.path.join(
+                                        out_dir,
+                                        "vc_%s-%03d.wav"
+                                        % (
+                                            time.strftime("%Y%m%d-%H%M%S"),
+                                            int(time.time() * 1000) % 1000,
+                                        ),
+                                    )
+                                    sf.write(out_path, audio[1], audio[0])
+                                    print(f"[DEBUG] saved to {out_path}", flush=True)
                                 else:
                                     print(f"[DEBUG] audio is None, info={info[:200]}", flush=True)
-                                return result
+                                return info, audio, out_path
                             except Exception as e:
                                 t1 = time.time()
                                 import traceback
                                 err = traceback.format_exc()
                                 print(f"\n[DEBUG ERROR] vc_single failed after {t1-t0:.1f}s:\n{err}", flush=True, file=sys.stderr)
-                                return str(e), (None, None)
+                                return str(e), (None, None), None
 
                         but0.click(
                             vc_single_debug,
@@ -1036,16 +1056,16 @@ with gr.Blocks(title="RVC WebUI") as app:
                                 rms_mix_rate0,
                                 protect0,
                             ],
-                            [vc_output1, vc_output2],
+                            [vc_output1, vc_output2, vc_output_file],
                             api_name="infer_convert",
                         )
                         clear_btn = gr.Button(
                             i18n("Clear output"), variant="secondary"
                         )
                         clear_btn.click(
-                            fn=lambda: (None, None),
+                            fn=lambda: (None, None, None),
                             inputs=[],
-                            outputs=[vc_output1, vc_output2],
+                            outputs=[vc_output1, vc_output2, vc_output_file],
                         )
             with gr.TabItem(i18n("批量推理")):
                 gr.Markdown(
