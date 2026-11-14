@@ -27,6 +27,25 @@ English version: [README.md](README.md)
 - macOS Sequoia (Apple Silicon)
 - Homebrew
 
+## Установка одним кликом (.dmg)
+
+Самый простой путь — скачать `RVC-WebUI-<версия>-macos.dmg` со страницы
+[Releases](https://github.com/ltillegal/rvc-macos-sequoia/releases/latest),
+перетащить **RVC WebUI.app** в `/Applications` и запустить.
+
+Приложение само: проверит и при необходимости поставит через Homebrew `ffmpeg`,
+`python@3.9` и `aria2`, создаст окружение в `~/Library/Application Support/RVC-WebUI`,
+установит зависимости и скачает предобученные модели. Первый запуск занимает
+10–30 минут и ~4 ГБ диска, дальше интерфейс открывается сразу.
+
+Так как сборка не нотаризована, при первом запуске macOS может ругаться —
+правый клик по приложению → **Открыть**, либо:
+
+    xattr -dr com.apple.quarantine /Applications/RVC\ WebUI.app
+
+Исходники внутри `.app` — это ровно этот репозиторий на момент релиза,
+поэтому обновление сводится к установке новой версии `.dmg`.
+
 ## Установка
 
     brew install ffmpeg python@3.9 aria2
