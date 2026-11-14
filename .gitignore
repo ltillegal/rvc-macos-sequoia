@@ -20,3 +20,6 @@ opt/
 insert_ui_block.py
 __pycache__/
 *.pyc
+
+# packaging output
+dist/
