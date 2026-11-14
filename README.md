@@ -218,6 +218,18 @@ Check i18n/i18n.py - I18nAuto.__init__ should auto-detect locale and fall back t
     git fetch upstream
     git merge upstream/main
 
+
+## Credits
+
+- Original RVC-WebUI: RVC-Project/Retrieval-based-Voice-Conversion-WebUI
+- macOS port: qingbo1011/RVC-WebUI-MacOS
+
+## License
+
+MIT
+
+---
+
 ## Support the project
 
 If this fork saves you time, you can buy me a coffee:
@@ -229,12 +241,3 @@ If this fork saves you time, you can buy me a coffee:
 </p>
 
 PayPal: [0eskimo0@gmail.com](https://www.paypal.com/donate/?business=0eskimo0%40gmail.com&no_recurring=0&item_name=Support+RVC-WebUI-MacOS&currency_code=USD)
-
-## Credits
-
-- Original RVC-WebUI: RVC-Project/Retrieval-based-Voice-Conversion-WebUI
-- macOS port: qingbo1011/RVC-WebUI-MacOS
-
-## License
-
-MIT

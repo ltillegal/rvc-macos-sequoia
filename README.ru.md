@@ -218,6 +218,18 @@ RVC декодирует аудиофайл целиком в память пе�
     git fetch upstream
     git merge upstream/main
 
+
+## Благодарности
+
+- Оригинальный RVC-WebUI: RVC-Project/Retrieval-based-Voice-Conversion-WebUI
+- macOS-порт: qingbo1011/RVC-WebUI-MacOS
+
+## Лицензия
+
+MIT
+
+---
+
 ## Поддержать проект
 
 Если форк сэкономил вам время, можно угостить меня кофе:
@@ -229,12 +241,3 @@ RVC декодирует аудиофайл целиком в память пе�
 </p>
 
 PayPal: [0eskimo0@gmail.com](https://www.paypal.com/donate/?business=0eskimo0%40gmail.com&no_recurring=0&item_name=Support+RVC-WebUI-MacOS&currency_code=USD)
-
-## Благодарности
-
-- Оригинальный RVC-WebUI: RVC-Project/Retrieval-based-Voice-Conversion-WebUI
-- macOS-порт: qingbo1011/RVC-WebUI-MacOS
-
-## Лицензия
-
-MIT
