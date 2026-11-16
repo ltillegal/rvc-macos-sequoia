@@ -42,7 +42,9 @@ step() { printf '%s==>%s %s\n' "$c_cyan" "$c_off" "$*"; }
 ok()   { printf '    %s✓%s %s\n' "$c_cyan" "$c_off" "$*"; }
 warn() { printf '    %s!%s %s\n' "$c_yellow" "$c_off" "$*"; }
 die()  { printf '\n%serror:%s %s\n' "$c_red" "$c_off" "$*" >&2
-         printf 'Full log: %s\n\n' "$LOG" >&2; exit 1; }
+         printf 'Full log: %s\n' "$LOG" >&2
+         [ -f "$LOG.prev" ] && printf 'Previous run: %s\n' "$LOG.prev" >&2
+         printf '\n' >&2; exit 1; }
 
 banner() {
   printf '\n%sRVC WebUI %s%s — macOS\n' "$c_cyan" "$VERSION" "$c_off"
@@ -54,6 +56,8 @@ DRY_RUN="${RVC_DRY_RUN:-0}"       # 1: install Homebrew deps, check the layout, 
 SETUP_ONLY="${RVC_SETUP_ONLY:-0}" # 1: install everything, do not start the WebUI
 
 mkdir -p "$SUPPORT" "$LOGS"
+# Keep the previous run's log: after a failure it is usually the one that matters.
+[ -s "$LOG" ] && mv -f "$LOG" "$LOG.prev"
 : > "$LOG"
 
 banner
@@ -142,15 +146,15 @@ fi
 #
 # 4. Pretrained models
 #
-if [ ! -f "$SRC/assets/hubert/hubert_base.pt" ] || [ ! -f "$SRC/assets/rmvpe/rmvpe.pt" ]; then
-  step "Downloading the pretrained models (hubert, rmvpe, uvr5)"
+if ( cd "$SRC" && ./tools/dlmodels.sh --check ) >>"$LOG" 2>&1; then
+  step "Pretrained models already present"
+else
+  step "Downloading the missing pretrained models — about 4 GB"
   ( cd "$SRC" && ./tools/dlmodels.sh ) >>"$LOG" 2>&1 || {
     tail -20 "$LOG" >&2
     die "Could not download the models"
   }
   ok "models downloaded"
-else
-  step "Pretrained models already present"
 fi
 
 #
