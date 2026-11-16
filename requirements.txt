@@ -1,4 +1,5 @@
-# aria2 - 移除：Mac M芯片不支持该Python包，但系统已安装aria2c命令行工具
+# aria2 - removed: the Python package does not support Apple Silicon, the
+# aria2c command-line tool is installed through Homebrew instead.
 joblib>=1.1.0
 numba==0.56.4
 numpy==1.23.5
@@ -46,3 +47,14 @@ torchfcpe
 ffmpy==0.3.1
 python-dotenv>=1.0.0
 av
+
+# Pin PyTorch here as well as in the launcher and the README so a fresh resolve
+# cannot drift. torch 2.4.x is the last line where torch.load() defaults to
+# weights_only=False, which the RVC checkpoints rely on.
+torch==2.4.0
+torchvision==0.19.0
+torchaudio==2.4.0
+# torchfcpe depends on local-attention; 1.10.1 and newer pull in
+# hyper-connections, which requires torch>=2.5. 1.10.0 is the last release that
+# accepts torch 2.4.
+local-attention==1.10.0
