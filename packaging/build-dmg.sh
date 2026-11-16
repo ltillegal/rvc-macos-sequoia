@@ -60,6 +60,8 @@ cat > "$BUNDLE/Contents/Info.plist" <<PLIST
 PLIST
 
 # 3. Sources
+# The bundle only needs what the app runs: development files (tests, CI,
+# packaging, the plan) and the translations that no code reads are left out.
 echo "==> embedding sources"
 mkdir -p "$BUNDLE/Contents/Resources/app"
 rsync -a \
@@ -69,6 +71,19 @@ rsync -a \
   --exclude '__pycache__' \
   --exclude '.env' \
   --exclude 'logs' \
+  --exclude 'plan.md' \
+  --exclude 'tests' \
+  --exclude 'colab' \
+  --exclude '*.ipynb' \
+  --exclude '.github' \
+  --exclude 'packaging' \
+  --exclude 'docs/cn' \
+  --exclude 'docs/jp' \
+  --exclude 'docs/kr' \
+  --exclude 'docs/fr' \
+  --exclude 'docs/pt' \
+  --exclude 'docs/tr' \
+  --exclude 'docs/*.doc' \
   "$ROOT/" "$BUNDLE/Contents/Resources/app/"
 chmod +x "$BUNDLE/Contents/Resources/app/tools/dlmodels.sh" 2>/dev/null || true
 
