@@ -1,5 +1,5 @@
-# Тест A: install_model_from_zip в изоляции (stdlib-only).
-# Запуск: python3 -m unittest tests.test_installer_isolated -v
+# Test A: install_model_from_zip in isolation (stdlib-only).
+# Run: python3 -m unittest tests.test_installer_isolated -v
 import os
 import sys
 import tempfile

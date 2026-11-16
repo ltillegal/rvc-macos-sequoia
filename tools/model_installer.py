@@ -6,12 +6,12 @@ import tempfile
 
 def _resolve_dirs():
     """
-    Возвращает (weights_dir, indices_dir), беря пути из тех же переменных
-    окружения, что использует infer-web.py.
-    - weight_root -> папка с .pth (по умолчанию assets/weights)
-    - index_root  -> папка с .index, которую обходит change_choices()
-                     (по умолчанию logs)
-    outside_index_root сознательно НЕ используется.
+    Return (weights_dir, indices_dir) using the same environment variables as
+    infer-web.py.
+    - weight_root -> directory with .pth files (default: assets/weights)
+    - index_root  -> directory with .index files that change_choices() walks
+                     (default: logs)
+    outside_index_root is deliberately NOT used.
     """
     weights_dir = os.getenv("weight_root") or os.path.join("assets", "weights")
     indices_dir = os.getenv("index_root") or "logs"
@@ -20,8 +20,8 @@ def _resolve_dirs():
 
 def _atomic_copy(src, dst_dir, name):
     """
-    Копирует src в dst_dir/name атомарно: сначала во временный файл в той же
-    папке, затем os.replace. Прерывание не оставит битый файл.
+    Copy src to dst_dir/name atomically: write a temporary file in the same
+    directory, then os.replace it. An interruption cannot leave a broken file.
     """
     os.makedirs(dst_dir, exist_ok=True)
     dst = os.path.join(dst_dir, name)
@@ -41,11 +41,12 @@ def _atomic_copy(src, dst_dir, name):
 
 def install_model_from_zip(zip_path):
     """
-    Принимает путь к ZIP (str) или объект Gradio gr.File (dict / .name),
-    распаковывает во временную папку, находит .pth и .index и кладёт их:
-      - .pth   -> weight_root  (по умолчанию assets/weights)
-      - .index -> index_root   (по умолчанию logs)
-    Возвращает одну строку статуса (для gr.Textbox).
+    Accept a ZIP path (str) or a Gradio gr.File object (dict / .name),
+    extract it into a temporary directory, find the .pth and .index files and
+    install them:
+      - .pth   -> weight_root  (default: assets/weights)
+      - .index -> index_root   (default: logs)
+    Return a single status line (for gr.Textbox).
     """
     if not zip_path:
         return "Error: no file provided"
@@ -73,7 +74,7 @@ def install_model_from_zip(zip_path):
         except zipfile.BadZipFile:
             return "Error: invalid ZIP file"
 
-        # Сначала собираем кандидатов, ничего не копируя на диск.
+        # Collect the candidates first, without writing anything to disk.
         pth_files = []
         index_files = []
         for root, _, files in os.walk(tmpdir):
@@ -84,11 +85,11 @@ def install_model_from_zip(zip_path):
                 elif f.endswith(".index"):
                     index_files.append((src, f))
 
-        # Валидация до любой записи: при ошибке на диск ничего не попадает.
+        # Validate before any write: a failure must leave the disk untouched.
         if not pth_files:
             return "Error: no .pth file found inside ZIP"
 
-        # Копирование только после успешной валидации.
+        # Copy only after validation succeeded.
         for src, f in pth_files:
             _atomic_copy(src, weights_dir, f)
             extracted_pth.append(f)
