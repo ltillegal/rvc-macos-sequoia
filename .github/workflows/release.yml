@@ -3,6 +3,7 @@ name: release
 on:
   push:
     tags: ["v*"]
+  pull_request:
   workflow_dispatch:
     inputs:
       tag:
@@ -24,25 +25,51 @@ jobs:
 
       - name: Build .dmg
         id: build
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          if [ -n "${{ inputs.tag }}" ]; then VERSION="${{ inputs.tag }}"; VERSION="${VERSION#v}"; fi
+          if [ -n "$INPUT_TAG" ]; then
+            VERSION="${INPUT_TAG#v}"
+          elif [ "$EVENT_NAME" = "pull_request" ]; then
+            VERSION="0.0.0"
+          else
+            VERSION="${REF_NAME#v}"
+          fi
           bash packaging/build-dmg.sh --version "$VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Smoke test the bundle
+        env:
+          VERSION: ${{ steps.build.outputs.version }}
         run: |
-          hdiutil verify "dist/RVC-WebUI-${{ steps.build.outputs.version }}-macos.dmg" | tail -1
-          MP=$(hdiutil attach "dist/RVC-WebUI-${{ steps.build.outputs.version }}-macos.dmg" -nobrowse -readonly | grep -o '/Volumes/.*' | head -1)
+          hdiutil verify "dist/RVC-WebUI-$VERSION-macos.dmg" | tail -1
+          MP=$(hdiutil attach "dist/RVC-WebUI-$VERSION-macos.dmg" -nobrowse -readonly | grep -o '/Volumes/.*' | head -1)
           trap 'hdiutil detach "$MP" -quiet' EXIT
           test -x "$MP/RVC WebUI.app/Contents/MacOS/RVCWebUI"
           test -f "$MP/RVC WebUI.app/Contents/Resources/app/infer-web.py"
           test -f "$MP/RVC WebUI.app/Contents/Resources/icon.icns"
           codesign --verify --deep --strict "$MP/RVC WebUI.app"
-          grep -q "^VERSION=\"${{ steps.build.outputs.version }}\"" "$MP/RVC WebUI.app/Contents/MacOS/RVCWebUI"
+          grep -q "^VERSION=\"$VERSION\"" "$MP/RVC WebUI.app/Contents/MacOS/RVCWebUI"
           echo "bundle ok"
 
+      # Catches broken Homebrew formulas and launcher regressions before a tag
+      # exists: dry-run installs the declared dependencies, copies the sources
+      # and stops before pip.
+      - name: First-launch dry run
+        if: github.event_name == 'pull_request'
+        env:
+          RVC_NO_TERMINAL: "1"
+          RVC_DRY_RUN: "1"
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          MP=$(hdiutil attach "dist/RVC-WebUI-$VERSION-macos.dmg" -nobrowse -readonly | grep -o '/Volumes/.*' | head -1)
+          trap 'hdiutil detach "$MP" -quiet' EXIT
+          "$MP/RVC WebUI.app/Contents/MacOS/RVCWebUI"
+
       - name: Publish release assets
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag || github.ref_name }}

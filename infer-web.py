@@ -1714,7 +1714,9 @@ with gr.Blocks(title="RVC WebUI") as app:
         app.queue(concurrency_count=511, max_size=1022).launch(share=True)
     else:
         app.queue(concurrency_count=511, max_size=1022).launch(
-            server_name="0.0.0.0",
+            # The DMG launcher sets RVC_LISTEN_HOST=127.0.0.1: the UI has no
+            # authentication, so a bundled app must not listen on the LAN.
+            server_name=os.environ.get("RVC_LISTEN_HOST", "0.0.0.0"),
             inbrowser=not config.noautoopen,
             server_port=config.listen_port,
             quiet=True,

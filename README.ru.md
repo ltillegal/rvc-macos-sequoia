@@ -18,7 +18,7 @@ English version: [README.md](README.md)
 ## Что исправлено в этом форке
 
 - Английский интерфейс по умолчанию — определяется локаль системы, при отсутствии английского используется en_US вместо жёстко заданного zh_CN
-- Убрана зависимость от pyenv — `run.sh` и `run-realtime.sh` используют Homebrew Python 3.9, путь задаётся через `PYTHON_BIN`
+- Убрана зависимость от pyenv — `run.sh` и `run-realtime.sh` используют Homebrew Python 3.10, путь задаётся через `PYTHON_BIN`
 - Исправлен конфликт fairseq / omegaconf — python-обёртка aria2 закомментирована, всё работает с `pip<24.1`
 - Проверено на macOS Sequoia (Apple Silicon: M1/M2/M3/M4)
 
@@ -34,8 +34,8 @@ English version: [README.md](README.md)
 перетащить **RVC WebUI.app** в `/Applications` и запустить.
 
 Приложение само: проверит и при необходимости поставит через Homebrew `ffmpeg`,
-`python@3.9` и `aria2`, создаст окружение в `~/Library/Application Support/RVC-WebUI`,
-установит зависимости и скачает предобученные модели. Первый запуск занимает
+`python@3.10` и `aria2`, создаст окружение в `~/Library/Application Support/RVC-WebUI`,
+установит PyTorch 2.4.0 и зависимости, скачает предобученные модели. Первый запуск занимает
 10–30 минут и ~4 ГБ диска, дальше интерфейс открывается сразу.
 
 Так как сборка не нотаризована, при первом запуске macOS может ругаться —
@@ -48,15 +48,16 @@ English version: [README.md](README.md)
 
 ## Установка
 
-    brew install ffmpeg python@3.9 aria2
+    brew install ffmpeg python@3.10 aria2
 
     git clone https://github.com/ltillegal/rvc-macos-sequoia.git
     cd rvc-macos-sequoia
 
-    /opt/homebrew/opt/python@3.9/bin/python3.9 -m venv .venv
+    /opt/homebrew/opt/python@3.10/bin/python3.10 -m venv .venv
     source .venv/bin/activate
 
     pip install pip==24.0
+    pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0
     pip install -r requirements.txt
 
     python infer-web.py
@@ -208,9 +209,10 @@ RVC декодирует аудиофайл целиком в память пе�
 
 ### Нет окружения venv
 
-    /opt/homebrew/opt/python@3.9/bin/python3.9 -m venv .venv
+    /opt/homebrew/opt/python@3.10/bin/python3.10 -m venv .venv
     source .venv/bin/activate
     pip install pip==24.0
+    pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0
     pip install -r requirements.txt
 
 ### Конвертация падает с `segmentation fault` (`Loading rmvpe model`)

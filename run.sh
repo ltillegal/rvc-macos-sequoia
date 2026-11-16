@@ -39,9 +39,9 @@ if [ -d ".venv" ]; then
 else
   echo "Error: virtual environment .venv does not exist"
   echo "Create it first:"
-  echo "  ${PYTHON_BIN:-/opt/homebrew/opt/python@3.9/bin/python3.9} -m venv .venv"
+  echo "  ${PYTHON_BIN:-/opt/homebrew/opt/python@3.10/bin/python3.10} -m venv .venv"
   echo "  source .venv/bin/activate"
-  echo "  pip install torch torchvision torchaudio"
+  echo "  pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0"
   echo "  pip install -r requirements.txt"
   exit 1
 fi
