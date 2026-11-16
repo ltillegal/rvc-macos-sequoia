@@ -44,6 +44,11 @@ the app → **Open**, or:
 
     xattr -dr com.apple.quarantine /Applications/RVC\ WebUI.app
 
+The release publishes `RVC-WebUI-<version>-macos.dmg.sha256` next to the
+image; check it from the download directory with:
+
+    shasum -a 256 -c RVC-WebUI-<version>-macos.dmg.sha256
+
 The sources embedded in the `.app` are exactly this repository at release time,
 so upgrading means installing a newer `.dmg`.
 

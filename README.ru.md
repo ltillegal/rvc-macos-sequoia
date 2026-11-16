@@ -43,6 +43,11 @@ English version: [README.md](README.md)
 
     xattr -dr com.apple.quarantine /Applications/RVC\ WebUI.app
 
+Рядом с образом релиз публикует `RVC-WebUI-<версия>-macos.dmg.sha256`;
+проверить его можно из каталога загрузки:
+
+    shasum -a 256 -c RVC-WebUI-<версия>-macos.dmg.sha256
+
 Исходники внутри `.app` — это ровно этот репозиторий на момент релиза,
 поэтому обновление сводится к установке новой версии `.dmg`.
 

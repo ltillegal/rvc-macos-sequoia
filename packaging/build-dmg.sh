@@ -91,4 +91,5 @@ rm -rf "$STAGE"
 
 SIZE=$(du -h "$DMG" | cut -f1)
 echo "==> $DMG ($SIZE)"
-shasum -a 256 "$DMG" | tee "$DMG.sha256"
+# Write the basename so `shasum -a 256 -c` works from the download directory.
+( cd "$OUT" && shasum -a 256 "$(basename "$DMG")" ) | tee "$DMG.sha256"
