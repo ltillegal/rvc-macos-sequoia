@@ -1699,15 +1699,17 @@ with gr.Blocks(title="RVC WebUI") as app:
 
         tab_faq = i18n("常见问题解答")
         with gr.TabItem(tab_faq):
+            # docs/ ships the English FAQ only. Prefer the Chinese one when a
+            # checkout still has it, otherwise fall back to English instead of
+            # showing a traceback.
+            faq_path = "docs/cn/faq.md" if tab_faq == "常见问题解答" else "docs/en/faq_en.md"
+            if not os.path.exists(faq_path):
+                faq_path = "docs/en/faq_en.md"
             try:
-                if tab_faq == "常见问题解答":
-                    with open("docs/cn/faq.md", "r", encoding="utf8") as f:
-                        info = f.read()
-                else:
-                    with open("docs/en/faq_en.md", "r", encoding="utf8") as f:
-                        info = f.read()
+                with open(faq_path, "r", encoding="utf8") as f:
+                    info = f.read()
                 gr.Markdown(value=info)
-            except:
+            except Exception:
                 gr.Markdown(traceback.format_exc())
 
     if config.iscolab:
