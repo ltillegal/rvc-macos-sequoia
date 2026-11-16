@@ -8,6 +8,11 @@ name: lock
 # Actions -> lock -> Run workflow, then commit the downloaded artifact.
 
 on:
+  # Also run whenever the pins change, so the artifact always matches the
+  # requirements.txt of the commit that changed it.
+  push:
+    paths:
+      - requirements.txt
   workflow_dispatch:
     inputs:
       reason:
