@@ -236,7 +236,6 @@ def plot_spectrogram_to_numpy(spectrogram):
 
     fig.canvas.draw()
     # matplotlib >= 3.10 removed tostring_rgb(); buffer_rgba works on both.
-    # matplotlib >= 3.10 убрал tostring_rgb(), buffer_rgba работает везде.
     data = np.array(fig.canvas.buffer_rgba())[:, :, :3].copy()
     plt.close()
     return data
@@ -268,7 +267,6 @@ def plot_alignment_to_numpy(alignment, info=None):
 
     fig.canvas.draw()
     # matplotlib >= 3.10 removed tostring_rgb(); buffer_rgba works on both.
-    # matplotlib >= 3.10 убрал tostring_rgb(), buffer_rgba работает везде.
     data = np.array(fig.canvas.buffer_rgba())[:, :, :3].copy()
     plt.close()
     return data

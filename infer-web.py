@@ -153,8 +153,9 @@ class ToolButton(gr.Button, gr.components.FormComponent):
         return "button"
 
 
-# Дефолты путей: единый источник истины с tools/model_installer._resolve_dirs().
-# setdefault не перезаписывает переменные, если они уже заданы снаружи (run.sh/.env).
+# Path defaults: single source of truth shared with
+# tools/model_installer._resolve_dirs(). setdefault does not overwrite variables
+# that are already set from the outside (run.sh / .env).
 os.environ.setdefault("weight_root", "assets/weights")
 os.environ.setdefault("weight_uvr5_root", "assets/uvr5_weights")
 os.environ.setdefault("index_root", "logs")
