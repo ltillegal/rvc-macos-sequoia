@@ -1,0 +1,97 @@
+name: verify
+
+# Installs the full stack from requirements.lock.txt on macOS arm64, imports
+# every heavyweight dependency and boots the WebUI. The release workflow only
+# dry-runs the launcher, so this is the job that proves the environment works.
+#
+# Tip: run it from Actions -> verify -> Run workflow before a release.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - requirements.lock.txt
+      - requirements.txt
+      - .github/workflows/verify.yml
+  schedule:
+    # Weekly drift check: most of requirements.txt is range-pinned, so an
+    # upstream release can break a fresh install without any change here.
+    - cron: "0 4 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  boot:
+    name: install + boot the WebUI
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Homebrew dependencies
+        run: brew install ffmpeg python@3.10 aria2
+
+      - name: Create the virtual environment
+        run: |
+          PY="$(brew --prefix)/opt/python@3.10/bin/python3.10"
+          "$PY" -m venv .venv
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+          python -V
+
+      - name: Install the locked requirements
+        run: |
+          python -m pip install --disable-pip-version-check "pip==24.0"
+          python -m pip install --disable-pip-version-check -r requirements.lock.txt
+
+      - name: Import the stack
+        run: |
+          python -c '
+          import fairseq, faiss, gradio, librosa, numba, numpy, pyworld
+          import scipy, torch, torchaudio, torchvision
+          print("torch", torch.__version__)
+          print("torchvision", torchvision.__version__)
+          print("torchaudio", torchaudio.__version__)
+          print("numpy", numpy.__version__)
+          print("scipy", scipy.__version__)
+          print("gradio", gradio.__version__)
+          print("MPS available:", torch.backends.mps.is_available())
+          '
+
+      - name: Boot the WebUI
+        env:
+          RVC_LISTEN_HOST: 127.0.0.1
+          GRADIO_ANALYTICS_ENABLED: "False"
+          PYTORCH_ENABLE_MPS_FALLBACK: "1"
+        run: |
+          mkdir -p assets/weights assets/indices assets/pretrained \
+                   assets/pretrained_v2 assets/uvr5_weights assets/rmvpe \
+                   assets/hubert logs
+
+          python infer-web.py --noautoopen > ui.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+
+          ok=0
+          for _ in $(seq 1 120); do
+            if curl -fsS http://127.0.0.1:7865/ -o /dev/null; then
+              ok=1
+              break
+            fi
+            if ! kill -0 "$PID" 2>/dev/null; then
+              echo "WebUI exited before answering"
+              tail -80 ui.log
+              exit 1
+            fi
+            sleep 2
+          done
+
+          if [ "$ok" != "1" ]; then
+            echo "WebUI did not answer on 127.0.0.1:7865"
+            tail -80 ui.log
+            exit 1
+          fi
+
+          curl -fsS http://127.0.0.1:7865/ | grep -qi 'gradio'
+          echo "WebUI answered on http://127.0.0.1:7865"
+          tail -20 ui.log
