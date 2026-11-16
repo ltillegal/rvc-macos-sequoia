@@ -45,7 +45,7 @@ cat > "$BUNDLE/Contents/Info.plist" <<PLIST
 <dict>
   <key>CFBundleName</key><string>${APP_NAME}</string>
   <key>CFBundleDisplayName</key><string>${APP_NAME}</string>
-  <key>CFBundleIdentifier</key><string>local.rvcwebui.launcher</string>
+  <key>CFBundleIdentifier</key><string>io.github.ltillegal.rvc-webui</string>
   <key>CFBundleExecutable</key><string>RVCWebUI</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>${VERSION}</string>
@@ -78,9 +78,10 @@ if [ -f "$ROOT/packaging/icon.icns" ]; then
 fi
 
 # 5. Ad-hoc signature: unsigned arm64 bundles are rejected by Gatekeeper even
-#    after the quarantine bit is cleared; ad-hoc is enough for that.
+#    after the quarantine bit is cleared; ad-hoc is enough for that. No nested
+#    code here, so no --deep.
 echo "==> signing (ad-hoc)"
-codesign --force --deep --sign - "$BUNDLE" >/dev/null 2>&1 || echo "   warning: codesign failed"
+codesign --force --sign - "$BUNDLE" >/dev/null 2>&1 || echo "   warning: codesign failed"
 codesign --verify --deep --strict "$BUNDLE" 2>/dev/null && echo "   signature ok"
 
 # 6. DMG
