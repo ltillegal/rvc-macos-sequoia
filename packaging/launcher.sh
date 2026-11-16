@@ -50,7 +50,7 @@ banner() {
   printf '10-30 minutes and about 4 GB of disk. Later launches open the UI at once.\n\n'
 }
 
-DRY_RUN="${RVC_DRY_RUN:-0}"       # 1: check preconditions and layout, install nothing
+DRY_RUN="${RVC_DRY_RUN:-0}"       # 1: install Homebrew deps, check the layout, stop before pip
 SETUP_ONLY="${RVC_SETUP_ONLY:-0}" # 1: install everything, do not start the WebUI
 
 mkdir -p "$SUPPORT" "$LOGS"
@@ -75,12 +75,8 @@ for formula in ffmpeg aria2 "$BREW_PY"; do
   brew list --versions "$formula" >/dev/null 2>&1 || missing+=("$formula")
 done
 if [ ${#missing[@]} -gt 0 ]; then
-  if [ "$DRY_RUN" = "1" ]; then
-    warn "dry-run: missing ${missing[*]} (install skipped)"
-  else
-    warn "Missing: ${missing[*]} — installing, this takes a few minutes"
-    brew install "${missing[@]}" >>"$LOG" 2>&1 || die "brew install ${missing[*]} failed"
-  fi
+  warn "Missing: ${missing[*]} — installing, this takes a few minutes"
+  brew install "${missing[@]}" >>"$LOG" 2>&1 || die "brew install ${missing[*]} failed"
 fi
 PY="$(brew --prefix)/opt/$BREW_PY/bin/python3.10"
 [ -x "$PY" ] || die "Python 3.10 not found after install ($PY)"
@@ -113,7 +109,7 @@ else
   fi
   if [ "$DRY_RUN" = "1" ]; then
     warn "dry-run: skipping pip install (pip==24.0, torch==2.4.0, requirements.txt)"
-    step "dry-run finished: preconditions and layout are fine"
+    step "dry-run finished: Homebrew dependencies and the layout are fine"
     exit 0
   fi
   step "Upgrading pip to 24.0 (versions >= 24.1 break the fairseq build)"
