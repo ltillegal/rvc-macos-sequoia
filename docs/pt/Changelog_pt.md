@@ -33,10 +33,10 @@ Experimentos com falha:
 - ~~Recuperação de recursos: adicionar redução de dimensionalidade PCAR: a busca é ainda mais lenta~~
 - ~~Aumento de dados aleatórios durante o treinamento: não é eficaz~~
 
-Lista de tarefas：
+Lista de tarefas:
 - ~~Vocos-RVC (vocoder minúsculo): não é eficaz~~
 - ~~Suporte de crepe para treinamento: substituído pelo RMVPE~~
-- ~~Inferência de crepe de meia precisão：substituída pelo RMVPE. E difícil de conseguir.~~
+- ~~Inferência de crepe de meia precisão: substituída pelo RMVPE. E difícil de conseguir.~~
 - Suporte ao editor de F0
 
 ### 2023-05-28
@@ -84,7 +84,7 @@ Histórico de registros de alterações:
 - Adicionada uma mini-GUI de alteração de voz local em tempo real, iniciada com um clique duplo em go-realtime-gui.bat
 - Filtragem aplicada para bandas de frequência abaixo de 50 Hz durante o treinamento e a inferência
 - Diminuição da extração mínima de tom do pyworld do padrão 80 para 50 para treinamento e inferência, permitindo que vozes masculinas de tom baixo entre 50-80 Hz não sejam silenciadas
-- A WebUI suporta a alteração de idiomas de acordo com a localidade do sistema (atualmente suporta en_US, ja_JP, zh_CN, zh_HK, zh_SG, zh_TW; o padrão é en_US se não for suportado)
+- A WebUI suporta a alteração de idiomas de acordo com a localidade do sistema (atualmente suporta en_US, es_ES, fr_FR, it_IT, pt_BR, ru_RU, tr_TR; o padrão é en_US se não for suportado)
 - Correção do reconhecimento de algumas GPUs (por exemplo, falha no reconhecimento da V100-16G, falha no reconhecimento da P4)
 
 ### Atualização de 2023-04-28

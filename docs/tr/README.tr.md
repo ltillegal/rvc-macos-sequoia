@@ -20,7 +20,7 @@ VITS'e dayalı kullanımı kolay bir Ses Dönüşümü çerçevesi.<br><br>
 ------
 [**Değişiklik Geçmişi**](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/blob/main/docs/Changelog_TR.md) | [**SSS (Sıkça Sorulan Sorular)**](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/wiki/SSS-(Sıkça-Sorulan-Sorular)) 
 
-[**İngilizce**](../en/README.en.md) | [**中文简体**](../../README.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
+[**English**](../en/README.en.md) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
 
 Burada [Demo Video'muzu](https://www.bilibili.com/video/BV1pm4y1z7Gm/) izleyebilirsiniz!
 
@@ -74,7 +74,7 @@ Ayrıca bunları pip kullanarak da kurabilirsiniz:
 Nvidia grafik kartları için
   pip install -r requirements.txt
 
-AMD/Intel grafik kartları için：
+AMD/Intel grafik kartları için:
   pip install -r requirements-dml.txt
 
 Intel ARC grafik kartları için Linux / WSL ile Python 3.10 kullanarak: 

@@ -40,11 +40,11 @@ def cache_harvest_f0(input_audio_path, fs, f0max, f0min, frame_period):
     return f0
 
 
-def change_rms(data1, sr1, data2, sr2, rate):  # 1是输入音频，2是输出音频,rate是2的占比
+def change_rms(data1, sr1, data2, sr2, rate):  # 1 is the input, 2 the output, rate is the share of 2
     # print(data1.max(),data2.max())
     rms1 = librosa.feature.rms(
         y=data1, frame_length=sr1 // 2 * 2, hop_length=sr1 // 2
-    )  # 每半秒一个点
+    )  # one point every half second
     rms2 = librosa.feature.rms(y=data2, frame_length=sr2 // 2 * 2, hop_length=sr2 // 2)
     rms1 = torch.from_numpy(rms1)
     rms1 = F.interpolate(
@@ -71,14 +71,14 @@ class Pipeline(object):
             config.x_max,
             config.is_half,
         )
-        self.sr = 16000  # hubert输入采样率
-        self.window = 160  # 每帧点数
-        self.t_pad = self.sr * self.x_pad  # 每条前后pad时间
+        self.sr = 16000  # hubert input sample rate
+        self.window = 160  # samples per frame
+        self.t_pad = self.sr * self.x_pad  # padding before and after each segment
         self.t_pad_tgt = tgt_sr * self.x_pad
         self.t_pad2 = self.t_pad * 2
-        self.t_query = self.sr * self.x_query  # 查询切点前后查询时间
-        self.t_center = self.sr * self.x_center  # 查询切点位置
-        self.t_max = self.sr * self.x_max  # 免查询时长阈值
+        self.t_query = self.sr * self.x_query  # search window around the cut point
+        self.t_center = self.sr * self.x_center  # cut point position
+        self.t_max = self.sr * self.x_max  # threshold above which no search is needed
         self.device = config.device
 
     def get_f0(
@@ -168,7 +168,7 @@ class Pipeline(object):
 
         f0 *= pow(2, f0_up_key / 12)
         # with open("test.txt","w")as f:f.write("\n".join([str(i)for i in f0.tolist()]))
-        tf0 = self.sr // self.window  # 每秒f0点数
+        tf0 = self.sr // self.window  # f0 points per second
         if inp_f0 is not None:
             delta_t = np.round(
                 (inp_f0[:, 0].max() - inp_f0[:, 0].min()) * tf0 + 1

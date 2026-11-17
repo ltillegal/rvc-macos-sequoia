@@ -23,12 +23,48 @@ jobs:
       - name: Launcher syntax
         run: bash -n packaging/launcher.sh
 
+      - name: Import the Developer ID certificate
+        # Optional. Without the secrets the DMG is ad-hoc signed, which works
+        # locally but makes Gatekeeper ask the user to right-click -> Open.
+        env:
+          RVC_CODESIGN_IDENTITY: ${{ secrets.RVC_CODESIGN_IDENTITY }}
+          RVC_CODESIGN_P12: ${{ secrets.RVC_CODESIGN_P12 }}
+          RVC_CODESIGN_P12_PASSWORD: ${{ secrets.RVC_CODESIGN_P12_PASSWORD }}
+        run: |
+          if [ -z "$RVC_CODESIGN_IDENTITY" ]; then
+            echo "no signing identity configured, building an ad-hoc signed DMG"
+            exit 0
+          fi
+          if [ -z "$RVC_CODESIGN_P12" ]; then
+            echo "RVC_CODESIGN_IDENTITY is set but RVC_CODESIGN_P12 is empty" >&2
+            exit 1
+          fi
+          KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(uuidgen)"
+          echo "$RVC_CODESIGN_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" \
+            -P "$RVC_CODESIGN_P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
+          security list-keychains -d user -s "$KEYCHAIN" \
+            $(security list-keychains -d user | tr -d '"')
+          rm -f "$RUNNER_TEMP/cert.p12"
+          security find-identity -v -p codesigning "$KEYCHAIN"
+
       - name: Build .dmg
         id: build
         env:
           INPUT_TAG: ${{ inputs.tag }}
           EVENT_NAME: ${{ github.event_name }}
           REF_NAME: ${{ github.ref_name }}
+          RVC_CODESIGN_IDENTITY: ${{ secrets.RVC_CODESIGN_IDENTITY }}
+          RVC_NOTARY_PROFILE: ${{ secrets.RVC_NOTARY_PROFILE }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
         run: |
           if [ -n "$INPUT_TAG" ]; then
             VERSION="${INPUT_TAG#v}"

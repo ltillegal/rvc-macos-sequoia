@@ -10,8 +10,10 @@ done; this file only summarises the shape of the project and the open tasks.
 
 ## What this fork changes
 
-- English UI by default: the locale auto-detection falls back to `en_US`
-  instead of the upstream hardcoded `zh_CN`.
+- English-only repository and UI: the locale auto-detection falls back to
+  `en_US`, the i18n keys are the English source text, the CJK locale files are
+  gone (those languages fall back to English), and every comment and string in
+  the tree is English. `LICENSE` keeps the upstream copyright name.
 - Python 3.11: `run.sh`, the launcher and CI use Homebrew `python@3.11`
   through `PYTHON_BIN`. Homebrew disabled `python@3.9` on 2026-10-15;
   `python@3.10` is deprecated and goes away on 2027-10-01.
@@ -37,12 +39,14 @@ done; this file only summarises the shape of the project and the open tasks.
 | Path | Purpose |
 | --- | --- |
 | `packaging/launcher.sh` | Frozen into the `.app`; first-run installer and launcher |
-| `packaging/build-dmg.sh` | Stages the bundle, writes `Info.plist`, signs ad-hoc, builds the `.dmg` and its `.sha256` |
+| `packaging/build-dmg.sh` | Stages the bundle, writes `Info.plist`, signs (ad-hoc or Developer ID), optionally notarizes, builds the `.dmg` and its `.sha256` |
 | `tools/dlmodels.sh` | Downloads the 19 required model files; `--check` reports what is missing |
 | `tools/model_installer.py` | ZIP model installer used by the WebUI |
+| `tools/check_cjk.py` | Fails when a tracked text file contains CJK; `LICENSE` is exempt |
 | `.github/workflows/release.yml` | Build and smoke-test on PRs, dry-run the first launch, publish on tags |
 | `.github/workflows/lock.yml` | Regenerates `requirements.lock.txt` on `macos-latest` |
 | `.github/workflows/verify.yml` | Installs the lockfile, imports the stack and boots the WebUI on `macos-latest` |
+| `.github/workflows/lint.yml` | Runs the cheap always-on checks (currently `tools/check_cjk.py`) on every push |
 | `docs/en/` | The only docs that ship inside the bundle; the FAQ tab reads `docs/en/faq_en.md` |
 
 ## Installer flow
@@ -75,6 +79,8 @@ Environment flags used by CI and debugging:
 - `release.yml` runs on every pull request: it builds the `.dmg`, opens it,
   checks the bundle layout and the embedded version, verifies the signature and
   runs the launcher with `RVC_DRY_RUN=1` on macOS.
+- `lint.yml` runs `tools/check_cjk.py` on every push and pull request, so CJK
+  text cannot come back unnoticed.
 - Tags matching `v*` publish `RVC-WebUI-<version>-macos.dmg` plus a `.sha256`
   that verifies from the download directory with
   `shasum -a 256 -c RVC-WebUI-<version>-macos.dmg.sha256`.
@@ -97,16 +103,43 @@ Environment flags used by CI and debugging:
   (disabled `python@3.9`) and `v0.2.0` ships a `.sha256` with a `dist/` path.
   All of them are marked in their release notes and kept for history.
 
+## Signing and notarization
+
+`build-dmg.sh` is ad-hoc signing by default. A notarized build needs an Apple
+Developer account and these secrets in the repository settings:
+
+| Secret | Value |
+| --- | --- |
+| `RVC_CODESIGN_IDENTITY` | `Developer ID Application: Name (TEAMID)` |
+| `RVC_CODESIGN_P12` | base64 of the exported `.p12` (certificate + private key) |
+| `RVC_CODESIGN_P12_PASSWORD` | password of that `.p12` |
+| `APPLE_ID` | Apple ID used for notarization |
+| `APPLE_TEAM_ID` | team ID |
+| `APPLE_APP_PASSWORD` | app-specific password for that Apple ID |
+| `RVC_NOTARY_PROFILE` | optional keychain profile from `notarytool store-credentials`; wins over the Apple ID triple |
+
+With the identity set, `release.yml` imports the certificate into a temporary
+keychain and `build-dmg.sh` signs the bundle with the hardened runtime,
+notarizes a zip of it, staples the ticket into the bundle, then signs,
+notarizes and staples the `.dmg`. Without the secrets the workflow logs
+`no signing identity configured` and keeps producing the ad-hoc build.
+
+This path has not been run end to end yet: no Apple Developer account is
+available. The ad-hoc path is exercised by every pull request.
+
 ## Open tasks
 
 - [X] Migrate to Python 3.11: `numba` 0.58.1, `llvmlite` 0.41.1,
       `pyworld` 0.3.5 and a commit-pinned `fairseq` fork. `python@3.10` is
       deprecated and will be disabled on 2027-10-01.
-- [ ] Notarize the app. Until then macOS needs right-click -> Open, or
+- [ ] Notarize the app once an Apple Developer account exists. The scaffolding
+      is in `build-dmg.sh` and `release.yml` and is gated on the secrets above;
+      until then macOS needs right-click -> Open, or
       `xattr -dr com.apple.quarantine "/Applications/RVC WebUI.app"`.
-- [ ] Translate the remaining CJK text that is not user-facing documentation:
-      the `zh_CN` / `ja_JP` / `ko_KR` UI locale files, comments and strings in
-      `infer-web.py`, and `configs/config.py`.
+- [X] Remove CJK from the repository: English i18n keys, CJK locale files
+      deleted (fallback to English), comments and strings translated, the two
+      Chinese Colab notebooks deleted, `tools/check_cjk.py` plus `lint.yml`
+      keep it that way. `LICENSE` is the only exemption.
 - [X] Regenerate `requirements.lock.txt` on macOS with the torch 2.4 pins.
 - [X] Pin `gradio_client` 0.2.x, `huggingface_hub` 0.16.4, `httpx` 0.24.1 and
       setuptools so `import gradio` works on a fresh install, and add the

@@ -1,0 +1,21 @@
+name: lint
+
+# Cheap always-on checks. They need no macOS runner and no dependencies, so a
+# broken commit is caught in seconds instead of after a 30-minute install.
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  english-only:
+    name: no CJK text
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for CJK text
+        run: python3 tools/check_cjk.py

@@ -60,7 +60,7 @@ class AudioPre:
                 (
                     X_wave[d],
                     _,
-                ) = librosa.load(  # 理论上librosa读取可能对某些音频有bug，应该上ffmpeg读取，但是太麻烦了弃坑
+                ) = librosa.load(  # librosa can misread some files; ffmpeg would be safer but is not worth the churn
                     music_file,
                     sr=bp["sr"],
                     mono=False,
@@ -224,7 +224,7 @@ class AudioPreDeEcho:
 
     def _path_audio_(
         self, music_file, vocal_root=None, ins_root=None, format="flac", is_hp3=False
-    ):  # 3个VR模型vocal和ins是反的
+    ):  # for the three VR models the vocal/instrumental outputs are swapped
         if ins_root is None and vocal_root is None:
             return "No save root."
         name = os.path.basename(music_file)
@@ -241,7 +241,7 @@ class AudioPreDeEcho:
                 (
                     X_wave[d],
                     _,
-                ) = librosa.load(  # 理论上librosa读取可能对某些音频有bug，应该上ffmpeg读取，但是太麻烦了弃坑
+                ) = librosa.load(  # librosa can misread some files; ffmpeg would be safer but is not worth the churn
                     music_file,
                     sr=bp["sr"],
                     mono=False,

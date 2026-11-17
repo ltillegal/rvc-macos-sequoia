@@ -54,7 +54,7 @@ class VC:
         if sid == "" or sid == []:
             if (
                 self.hubert_model is not None
-            ):  # 考虑到轮询, 需要加个判断看是否 sid 是由有模型切换到无模型的
+            ):  # polling: detect a switch from a loaded model to none
                 logger.info("Clean model cache")
                 del (self.net_g, self.n_spk, self.hubert_model, self.tgt_sr)  # ,cpt
                 self.hubert_model = self.net_g = self.n_spk = self.hubert_model = (
@@ -62,7 +62,7 @@ class VC:
                 ) = None
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
-                ###楼下不这么折腾清理不干净
+                # work around stale state that otherwise leaks between models
                 self.if_f0 = self.cpt.get("f0", 1)
                 self.version = self.cpt.get("version", "v1")
                 if self.version == "v1":
@@ -183,7 +183,7 @@ class VC:
             elif file_index2:
                 file_index = file_index2
             else:
-                file_index = ""  # 防止小白写错，自动帮他替换掉
+                file_index = ""  # silently reset an invalid index path
 
             audio_opt = self.pipeline.pipeline(
                 self.hubert_model,
@@ -245,7 +245,7 @@ class VC:
         try:
             dir_path = (
                 dir_path.strip(" ").strip('"').strip("\n").strip('"').strip(" ")
-            )  # 防止小白拷路径头尾带了空格和"和回车
+            )  # strip stray whitespace, quotes and CR/LF from pasted paths
             opt_root = opt_root.strip(" ").strip('"').strip("\n").strip('"').strip(" ")
             os.makedirs(opt_root, exist_ok=True)
             try:

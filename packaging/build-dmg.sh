@@ -8,6 +8,19 @@
 # launch the launcher copies them into ~/Library/Application Support/RVC-WebUI,
 # so the .dmg is only needed for the initial install.
 #
+# Signing and notarization (both off by default):
+#   RVC_CODESIGN_IDENTITY   "Developer ID Application: Name (TEAMID)"; when set,
+#                           the app is signed with the hardened runtime and the
+#                           result is notarized with notarytool.
+#   RVC_NOTARY_PROFILE      keychain profile created by
+#                           `xcrun notarytool store-credentials`; used instead of
+#                           the APPLE_ID credentials below.
+#   APPLE_ID, APPLE_TEAM_ID, APPLE_APP_PASSWORD
+#                           Apple ID + team + app-specific password, used when no
+#                           keychain profile is given.
+# Without RVC_CODESIGN_IDENTITY the bundle is ad-hoc signed, which is enough for
+# local use but triggers Gatekeeper on other Macs.
+#
 set -euo pipefail
 
 VERSION="0.1.0"
@@ -17,7 +30,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --version) VERSION="$2"; shift 2 ;;
     --out)     OUT="$2";     shift 2 ;;
-    -h|--help) sed -n '2,10p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,23p' "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 1 ;;
   esac
 done
@@ -92,18 +105,65 @@ if [ -f "$ROOT/packaging/icon.icns" ]; then
   cp "$ROOT/packaging/icon.icns" "$BUNDLE/Contents/Resources/icon.icns"
 fi
 
-# 5. Ad-hoc signature: unsigned arm64 bundles are rejected by Gatekeeper even
-#    after the quarantine bit is cleared; ad-hoc is enough for that. No nested
-#    code here, so no --deep.
-echo "==> signing (ad-hoc)"
-codesign --force --sign - "$BUNDLE" >/dev/null 2>&1 || echo "   warning: codesign failed"
-codesign --verify --deep --strict "$BUNDLE" 2>/dev/null && echo "   signature ok"
+# 5. Sign. Ad-hoc by default: unsigned arm64 bundles are rejected by Gatekeeper
+#    even after the quarantine bit is cleared, and ad-hoc is enough for that. No
+#    nested code here, so no --deep. With a Developer ID the hardened runtime is
+#    required for notarization, and the ticket is stapled so Gatekeeper accepts
+#    the app without a network round-trip.
+IDENTITY="${RVC_CODESIGN_IDENTITY:--}"
+NOTARIZE=0
+if [ "$IDENTITY" != "-" ]; then
+  echo "==> signing with $IDENTITY"
+  codesign --force --options runtime --timestamp --sign "$IDENTITY" "$BUNDLE"
+  codesign --verify --strict "$BUNDLE"
+  NOTARIZE=1
+else
+  echo "==> signing (ad-hoc)"
+  codesign --force --sign - "$BUNDLE" >/dev/null 2>&1 || echo "   warning: codesign failed"
+  codesign --verify --deep --strict "$BUNDLE" 2>/dev/null && echo "   signature ok"
+fi
 
-# 6. DMG
+notarize() {
+  if [ -n "${RVC_NOTARY_PROFILE:-}" ]; then
+    xcrun notarytool submit "$1" --keychain-profile "$RVC_NOTARY_PROFILE" --wait
+  else
+    : "${APPLE_ID:?set RVC_NOTARY_PROFILE, or APPLE_ID/APPLE_TEAM_ID/APPLE_APP_PASSWORD}"
+    : "${APPLE_TEAM_ID:?set APPLE_TEAM_ID}"
+    : "${APPLE_APP_PASSWORD:?set APPLE_APP_PASSWORD}"
+    xcrun notarytool submit "$1" \
+      --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" \
+      --password "$APPLE_APP_PASSWORD" --wait
+  fi
+}
+
+# 6. Notarize the app before the staging directory goes away: stapling the
+#    ticket into the bundle is what lets the copy in /Applications launch
+#    without an online Gatekeeper check.
+if [ "$NOTARIZE" = "1" ]; then
+  ZIP="$OUT/RVC-WebUI-${VERSION}-macos.zip"
+  echo "==> notarizing the app"
+  /usr/bin/ditto -c -k --keepParent "$BUNDLE" "$ZIP"
+  notarize "$ZIP"
+  rm -f "$ZIP"
+  xcrun stapler staple "$BUNDLE"
+  xcrun stapler validate "$BUNDLE"
+fi
+
+# 7. DMG
 ln -s /Applications "$STAGE/Applications"
 echo "==> building dmg"
 hdiutil create -volname "$APP_NAME" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
 rm -rf "$STAGE"
+
+if [ "$NOTARIZE" = "1" ]; then
+  echo "==> notarizing the dmg"
+  codesign --force --timestamp --sign "$IDENTITY" "$DMG"
+  notarize "$DMG"
+  xcrun stapler staple "$DMG"
+  xcrun stapler validate "$DMG"
+else
+  echo "==> not notarized (set RVC_CODESIGN_IDENTITY to notarize)"
+fi
 
 SIZE=$(du -h "$DMG" | cut -f1)
 echo "==> $DMG ($SIZE)"

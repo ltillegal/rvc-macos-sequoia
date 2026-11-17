@@ -205,10 +205,10 @@ def run(rank, n_gpus, hps, logger: logging.Logger):
         net_g = DDP(net_g)
         net_d = DDP(net_d)
 
-    try:  # 如果能加载自动resume
+    try:  # resume automatically when possible
         _, _, _, epoch_str = utils.load_checkpoint(
             utils.latest_checkpoint_path(hps.model_dir, "D_*.pth"), net_d, optim_d
-        )  # D多半加载没事
+        )  # D loads fine most of the time
         if rank == 0:
             logger.info("loaded D")
         # _, _, _, epoch_str = utils.load_checkpoint(utils.latest_checkpoint_path(hps.model_dir, "G_*.pth"), net_g, optim_g,load_opt=0)
@@ -218,7 +218,7 @@ def run(rank, n_gpus, hps, logger: logging.Logger):
         global_step = (epoch_str - 1) * len(train_loader)
         # epoch_str = 1
         # global_step = 0
-    except:  # 如果首次不能加载，加载pretrain
+    except:  # first run: fall back to the pretrained weights
         # traceback.print_exc()
         epoch_str = 1
         global_step = 0
@@ -230,13 +230,13 @@ def run(rank, n_gpus, hps, logger: logging.Logger):
                     net_g.module.load_state_dict(
                         torch.load(hps.pretrainG, map_location="cpu")["model"]
                     )
-                )  ##测试不加载优化器
+                )  # test run: skip the optimizer
             else:
                 logger.info(
                     net_g.load_state_dict(
                         torch.load(hps.pretrainG, map_location="cpu")["model"]
                     )
-                )  ##测试不加载优化器
+                )  # test run: skip the optimizer
         if hps.pretrainD != "":
             if rank == 0:
                 logger.info("loaded pretrained %s" % (hps.pretrainD))
