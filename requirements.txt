@@ -8,6 +8,10 @@ librosa==0.9.1
 llvmlite==0.39.0
 fairseq==0.12.2
 faiss-cpu==1.7.3
+# gradio 3.34 does `import pkg_resources` in gradio/routes.py, and a venv made
+# by Homebrew python@3.10 no longer ships setuptools. Pinned so the import keeps
+# working if upstream ever removes pkg_resources.
+setuptools==69.5.1
 gradio==3.34.0
 # gradio 3.34 talks to the 0.2.x gradio_client API (it imports media_data from
 # it), but gradio's own requirement is only "gradio-client>=0.2.6", so a fresh

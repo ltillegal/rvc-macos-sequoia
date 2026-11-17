@@ -61,6 +61,7 @@ jobs:
           grep -qx 'torchaudio==2.4.0' requirements.lock.txt
           grep -qx 'local-attention==1.10.0' requirements.lock.txt
           grep -qx 'gradio_client==0.2.10' requirements.lock.txt
+          grep -qx 'setuptools==69.5.1' requirements.lock.txt
           if grep -q '^gradio_client==[^0]\|^gradio_client==0\.[^2]' requirements.lock.txt; then
             echo "gradio_client must stay on 0.2.x: gradio 3.34 imports media_data from it" >&2
             exit 1
