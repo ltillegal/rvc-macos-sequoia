@@ -52,7 +52,9 @@ jobs:
           {
             printf '# Generated on macOS arm64 with Python 3.10 by .github/workflows/lock.yml.\n'
             printf '# Regenerate: Actions -> lock -> Run workflow, then commit this file.\n'
-            python -m pip freeze
+            # --all keeps pip, setuptools and wheel: gradio needs pkg_resources at
+            # runtime, and a venv from Homebrew python@3.10 does not ship it.
+            python -m pip freeze --all
           } > requirements.lock.txt
 
           # The lock is only useful if it keeps the pins that the app needs.
