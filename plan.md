@@ -96,9 +96,11 @@ Environment flags used by CI and debugging:
   still finds `media_data` in `gradio_client`, then boots `infer-web.py` and
   waits for an HTTP answer on `127.0.0.1:7865`. This is the job that proves a
   release installs, so it must be green before tagging.
-- Published releases: `v0.3.0` is current. `v0.2.4` is the last build on
-  Python 3.10 and still works, but new installs need 3.11 because
-  `python@3.10` is deprecated. `v0.2.3` and older resolve `gradio_client` 2.x
+- Published releases: `v0.3.1` is current. `v0.3.0` introduced Python 3.11 and
+  still works; `v0.3.1` makes the i18n keys English, removes the CJK locale
+  files and fixes extracted models losing their pitch-guidance flag. `v0.2.4`
+  is the last build on Python 3.10 and still works, but new installs need 3.11
+  because `python@3.10` is deprecated. `v0.2.3` and older resolve `gradio_client` 2.x
   and fail to start the WebUI on a fresh install; `v0.1.0` does not install
   (disabled `python@3.9`) and `v0.2.0` ships a `.sha256` with a `dist/` path.
   All of them are marked in their release notes and kept for history.
