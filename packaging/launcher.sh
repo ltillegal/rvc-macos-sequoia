@@ -6,7 +6,7 @@
 # with the release version at build time.
 #
 # First run: installs Homebrew dependencies, copies the bundled sources into
-# ~/Library/Application Support/RVC-WebUI, creates a Python 3.10 venv, installs
+# ~/Library/Application Support/RVC-WebUI, creates a Python 3.11 venv, installs
 # PyTorch and the requirements, downloads the pretrained models, then starts the
 # WebUI. Later runs: go straight to the WebUI.
 #
@@ -20,6 +20,8 @@ VENV="$SRC/.venv"
 LOGS="$SUPPORT/logs"
 LOG="$LOGS/setup.log"
 STAMP="$SUPPORT/.setup-$VERSION"
+# Major.minor of the interpreter that built the venv.
+PY_MARK="$SUPPORT/.venv-python"
 
 # Resolve the bundle we live in: <bundle>/Contents/MacOS/<this script>
 SELF_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -72,7 +74,7 @@ command -v brew >/dev/null 2>&1 || die "Homebrew is required. Install it from ht
 #
 # 1. Homebrew dependencies
 #
-BREW_PY="python@3.10"
+BREW_PY="python@3.11"
 step "Checking Homebrew dependencies (ffmpeg, $BREW_PY, aria2)"
 missing=()
 for formula in ffmpeg aria2 "$BREW_PY"; do
@@ -82,8 +84,8 @@ if [ ${#missing[@]} -gt 0 ]; then
   warn "Missing: ${missing[*]} — installing, this takes a few minutes"
   brew install "${missing[@]}" >>"$LOG" 2>&1 || die "brew install ${missing[*]} failed"
 fi
-PY="$(brew --prefix)/opt/$BREW_PY/bin/python3.10"
-[ -x "$PY" ] || die "Python 3.10 not found after install ($PY)"
+PY="$(brew --prefix)/opt/$BREW_PY/bin/python3.11"
+[ -x "$PY" ] || die "Python 3.11 not found after install ($PY)"
 ok "$("$PY" -V 2>&1)"
 
 #
@@ -107,9 +109,19 @@ ok "sources in place"
 if [ -x "$VENV/bin/python" ] && [ -f "$STAMP" ]; then
   step "The $VERSION environment is already installed — skipping the setup"
 else
+  # The app can be upgraded across Python minor versions: installing 3.11
+  # packages into a 3.10 venv would leave a quietly broken environment.
+  want_py="$("$PY" -c 'import sys; print("%d.%d" % sys.version_info[:2])')"
+  have_py=""
+  [ -f "$PY_MARK" ] && have_py="$(cat "$PY_MARK" 2>/dev/null || true)"
+  if [ -x "$VENV/bin/python" ] && [ "$have_py" != "$want_py" ]; then
+    step "Replacing the virtual environment (built with Python ${have_py:-unknown}, need $want_py)"
+    rm -rf "$VENV" || die "Could not remove $VENV"
+  fi
   if [ ! -x "$VENV/bin/python" ]; then
-    step "Creating the virtual environment (Python 3.10)"
+    step "Creating the virtual environment (Python $want_py)"
     "$PY" -m venv "$VENV" >>"$LOG" 2>&1 || die "python -m venv failed"
+    printf '%s\n' "$want_py" > "$PY_MARK" 2>/dev/null || true
   fi
   if [ "$DRY_RUN" = "1" ]; then
     warn "dry-run: skipping pip install (pip==24.0, torch==2.4.0, requirements.txt)"

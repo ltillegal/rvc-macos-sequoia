@@ -32,12 +32,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Python 3.10
-        run: brew install python@3.10
+      - name: Install Python 3.11
+        run: brew install python@3.11
 
       - name: Create the virtual environment
         run: |
-          PY="$(brew --prefix)/opt/python@3.10/bin/python3.10"
+          PY="$(brew --prefix)/opt/python@3.11/bin/python3.11"
           "$PY" -m venv .venv
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
           "$PWD/.venv/bin/python" -V
@@ -50,10 +50,10 @@ jobs:
       - name: Freeze
         run: |
           {
-            printf '# Generated on macOS arm64 with Python 3.10 by .github/workflows/lock.yml.\n'
+            printf '# Generated on macOS arm64 with Python 3.11 by .github/workflows/lock.yml.\n'
             printf '# Regenerate: Actions -> lock -> Run workflow, then commit this file.\n'
             # --all keeps pip, setuptools and wheel: gradio needs pkg_resources at
-            # runtime, and a venv from Homebrew python@3.10 does not ship it.
+            # runtime, and a venv from Homebrew python@3.11 does not ship it.
             python -m pip freeze --all
           } > requirements.lock.txt
 
@@ -64,6 +64,8 @@ jobs:
           grep -qx 'local-attention==1.10.0' requirements.lock.txt
           grep -qx 'gradio_client==0.2.10' requirements.lock.txt
           grep -qx 'setuptools==69.5.1' requirements.lock.txt
+          grep -qx 'fairseq @ git+https://github.com/One-sixth/fairseq@44800430a728c2216fd1cf1e8daa672f50dfacba' requirements.lock.txt
+          python -c 'import sys; assert sys.version_info[:2] == (3, 11), sys.version'
           if grep -q '^gradio_client==[^0]\|^gradio_client==0\.[^2]' requirements.lock.txt; then
             echo "gradio_client must stay on 0.2.x: gradio 3.34 imports media_data from it" >&2
             exit 1

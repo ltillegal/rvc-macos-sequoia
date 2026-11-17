@@ -12,8 +12,12 @@ done; this file only summarises the shape of the project and the open tasks.
 
 - English UI by default: the locale auto-detection falls back to `en_US`
   instead of the upstream hardcoded `zh_CN`.
-- No pyenv: `run.sh` and `run-realtime.sh` use Homebrew `python@3.10` through
-  `PYTHON_BIN`. Homebrew disabled `python@3.9` on 2026-10-15.
+- Python 3.11: `run.sh`, the launcher and CI use Homebrew `python@3.11`
+  through `PYTHON_BIN`. Homebrew disabled `python@3.9` on 2026-10-15;
+  `python@3.10` is deprecated and goes away on 2027-10-01.
+- `fairseq` comes from `One-sixth/fairseq` pinned to a commit: the 0.12.2
+  release on PyPI cannot be imported on 3.11 because it uses dataclass
+  instances as field defaults.
 - PyTorch 2.4.0 / torchvision 0.19.0 / torchaudio 2.4.0 are pinned in
   `requirements.txt`, the launcher and the README. 2.4.x is the last line where
   `torch.load()` defaults to `weights_only=False`, which the RVC checkpoints
@@ -45,13 +49,14 @@ done; this file only summarises the shape of the project and the open tasks.
 
 `RVC WebUI.app` is a shell launcher with a version stamp. On first launch it:
 
-1. Checks for Homebrew and installs `ffmpeg`, `python@3.10` and `aria2` if
+1. Checks for Homebrew and installs `ffmpeg`, `python@3.11` and `aria2` if
    missing (the CI dry-run exercises this for real).
 2. Copies `Contents/Resources/app` into
    `~/Library/Application Support/RVC-WebUI/app`, dropping `.venv`, `assets`,
    `.env` and logs from the source tree.
-3. Creates `.venv`, installs `pip==24.0`, the pinned PyTorch and
-   `requirements.txt`, then writes `.setup-<version>`.
+3. Creates `.venv` (recreated when it was built by another Python minor
+   version), installs `pip==24.0`, the pinned PyTorch and `requirements.txt`,
+   then writes `.setup-<version>`.
 4. Runs `tools/dlmodels.sh --check`; downloads only when files are missing.
 5. Starts `infer-web.py` on `http://127.0.0.1:7865`.
 
@@ -93,7 +98,8 @@ Environment flags used by CI and debugging:
 
 ## Open tasks
 
-- [ ] Migrate to Python 3.11 (`numba` 0.58, `llvmlite` 0.43). `python@3.10` is
+- [X] Migrate to Python 3.11: `numba` 0.58.1, `llvmlite` 0.41.1,
+      `pyworld` 0.3.5 and a commit-pinned `fairseq` fork. `python@3.10` is
       deprecated and will be disabled on 2027-10-01.
 - [ ] Notarize the app. Until then macOS needs right-click -> Open, or
       `xattr -dr com.apple.quarantine "/Applications/RVC WebUI.app"`.

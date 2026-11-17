@@ -18,7 +18,7 @@ Russian version: [README.ru.md](README.ru.md)
 ## What's fixed in this fork
 
 - English UI by default - auto-detects system locale, falls back to en_US instead of hardcoded zh_CN
-- Removed pyenv dependency - run.sh and run-realtime.sh use Homebrew Python 3.10 with configurable PYTHON_BIN
+- Removed pyenv dependency - run.sh and run-realtime.sh use Homebrew Python 3.11 with configurable PYTHON_BIN
 - Fixed fairseq / omegaconf conflict - aria2 python wrapper commented out, works with pip<24.1
 - Tested on macOS Sequoia (Apple Silicon: M1/M2/M3/M4)
 
@@ -33,7 +33,7 @@ The easiest path: download `RVC-WebUI-<version>-macos.dmg` from the
 [Releases](https://github.com/ltillegal/rvc-macos-sequoia/releases/latest) page,
 drag **RVC WebUI.app** into `/Applications` and launch it.
 
-The app checks for and installs `ffmpeg`, `python@3.10` and `aria2` via Homebrew,
+The app checks for and installs `ffmpeg`, `python@3.11` and `aria2` via Homebrew,
 creates an environment in `~/Library/Application Support/RVC-WebUI`, installs
 PyTorch 2.4.0 and the requirements, and downloads the pretrained models. First
 launch takes 10–30 minutes and ~4 GB of disk; later launches open the UI
@@ -54,12 +54,12 @@ so upgrading means installing a newer `.dmg`.
 
 ## Installation
 
-    brew install ffmpeg python@3.10 aria2
+    brew install ffmpeg python@3.11 aria2
 
     git clone https://github.com/ltillegal/rvc-macos-sequoia.git
     cd rvc-macos-sequoia
 
-    /opt/homebrew/opt/python@3.10/bin/python3.10 -m venv .venv
+    /opt/homebrew/opt/python@3.11/bin/python3.11 -m venv .venv
     source .venv/bin/activate
 
     pip install pip==24.0
@@ -215,7 +215,7 @@ The Colab notebook already pins `setuptools==79.0.1`.
 
 ### venv does not exist
 
-    /opt/homebrew/opt/python@3.10/bin/python3.10 -m venv .venv
+    /opt/homebrew/opt/python@3.11/bin/python3.11 -m venv .venv
     source .venv/bin/activate
     pip install pip==24.0
     pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0
