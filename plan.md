@@ -38,6 +38,7 @@ done; this file only summarises the shape of the project and the open tasks.
 | `tools/model_installer.py` | ZIP model installer used by the WebUI |
 | `.github/workflows/release.yml` | Build and smoke-test on PRs, dry-run the first launch, publish on tags |
 | `.github/workflows/lock.yml` | Regenerates `requirements.lock.txt` on `macos-latest` |
+| `.github/workflows/verify.yml` | Installs the lockfile, imports the stack and boots the WebUI on `macos-latest` |
 | `docs/en/` | The only docs that ship inside the bundle; the FAQ tab reads `docs/en/faq_en.md` |
 
 ## Installer flow
@@ -74,11 +75,21 @@ Environment flags used by CI and debugging:
   `shasum -a 256 -c RVC-WebUI-<version>-macos.dmg.sha256`.
 - `lock.yml` runs on `workflow_dispatch` and whenever `requirements.txt`
   changes. It installs the real requirements on macOS arm64, checks that the
-  torch 2.4 pins survive, and uploads `requirements.lock.txt` as an artifact
-  (nothing is committed automatically).
-- Published releases: `v0.2.3` is current. `v0.1.0` does not install (disabled
-  `python@3.9`) and `v0.2.0` ships a `.sha256` with a `dist/` path; both are
-  marked in their release notes and kept for history.
+  torch 2.4 and `gradio_client` 0.2.x pins survive, and uploads
+  `requirements.lock.txt` as an artifact (nothing is committed automatically).
+  The lock is produced with `pip freeze --all`, because plain `pip freeze`
+  drops setuptools and gradio needs `pkg_resources` at import time.
+- `verify.yml` runs on `workflow_dispatch`, on changes to either requirements
+  file and weekly. It installs `requirements.lock.txt` into a fresh virtualenv
+  on macOS arm64, imports every heavyweight dependency, checks that gradio
+  still finds `media_data` in `gradio_client`, then boots `infer-web.py` and
+  waits for an HTTP answer on `127.0.0.1:7865`. This is the job that proves a
+  release installs, so it must be green before tagging.
+- Published releases: `v0.2.4` is current. `v0.2.3` and older resolve
+  `gradio_client` 2.x and fail to start the WebUI on a fresh install;
+  `v0.1.0` does not install (disabled `python@3.9`) and `v0.2.0` ships a
+  `.sha256` with a `dist/` path. All of them are marked in their release notes
+  and kept for history.
 
 ## Open tasks
 
@@ -90,6 +101,9 @@ Environment flags used by CI and debugging:
       the `zh_CN` / `ja_JP` / `ko_KR` UI locale files, comments and strings in
       `infer-web.py`, and `configs/config.py`.
 - [X] Regenerate `requirements.lock.txt` on macOS with the torch 2.4 pins.
+- [X] Pin `gradio_client` 0.2.x, `huggingface_hub` 0.16.4, `httpx` 0.24.1 and
+      setuptools so `import gradio` works on a fresh install, and add the
+      `verify` workflow that installs the lockfile and boots the WebUI.
 - [X] Strip `plan.md`, `tests/`, `colab/`, `.github/`, `packaging/` and the
       non-English docs from the `.app` bundle.
 - [X] Make the FAQ tab fall back to `docs/en/faq_en.md` instead of a traceback.

@@ -49,12 +49,18 @@ jobs:
           python -c '
           import fairseq, faiss, gradio, librosa, numba, numpy, pyworld
           import scipy, torch, torchaudio, torchvision
+          from gradio_client import media_data
+          import gradio_client, huggingface_hub, httpx, websockets
           print("torch", torch.__version__)
           print("torchvision", torchvision.__version__)
           print("torchaudio", torchaudio.__version__)
           print("numpy", numpy.__version__)
           print("scipy", scipy.__version__)
           print("gradio", gradio.__version__)
+          print("gradio_client", gradio_client.__version__)
+          print("huggingface_hub", huggingface_hub.__version__)
+          print("httpx", httpx.__version__)
+          print("websockets", websockets.__version__)
           print("MPS available:", torch.backends.mps.is_available())
           '
 

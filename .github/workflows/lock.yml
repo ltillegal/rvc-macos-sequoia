@@ -52,7 +52,9 @@ jobs:
           {
             printf '# Generated on macOS arm64 with Python 3.10 by .github/workflows/lock.yml.\n'
             printf '# Regenerate: Actions -> lock -> Run workflow, then commit this file.\n'
-            python -m pip freeze
+            # --all keeps pip, setuptools and wheel: gradio needs pkg_resources at
+            # runtime, and a venv from Homebrew python@3.10 does not ship it.
+            python -m pip freeze --all
           } > requirements.lock.txt
 
           # The lock is only useful if it keeps the pins that the app needs.
@@ -60,6 +62,12 @@ jobs:
           grep -qx 'torchvision==0.19.0' requirements.lock.txt
           grep -qx 'torchaudio==2.4.0' requirements.lock.txt
           grep -qx 'local-attention==1.10.0' requirements.lock.txt
+          grep -qx 'gradio_client==0.2.10' requirements.lock.txt
+          grep -qx 'setuptools==69.5.1' requirements.lock.txt
+          if grep -q '^gradio_client==[^0]\|^gradio_client==0\.[^2]' requirements.lock.txt; then
+            echo "gradio_client must stay on 0.2.x: gradio 3.34 imports media_data from it" >&2
+            exit 1
+          fi
           if grep -q '^torch-einops-utils==' requirements.lock.txt; then
             echo "torch-einops-utils must not be present: it requires torch>=2.5" >&2
             exit 1
