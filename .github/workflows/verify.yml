@@ -71,7 +71,7 @@ jobs:
         run: |
           mkdir -p assets/hubert
           curl -fL --retry 3 -o assets/hubert/hubert_base.pt \
-            https://huggingface.co/lj1995/VoiceConversionWebUI/resolve/main/hubert/hubert_base.pt
+            https://huggingface.co/lj1995/VoiceConversionWebUI/resolve/main/hubert_base.pt
           python -c '
           import torch
           from fairseq.checkpoint_utils import load_model_ensemble_and_task
