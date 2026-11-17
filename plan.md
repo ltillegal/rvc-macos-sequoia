@@ -1,6 +1,6 @@
 # RVC WebUI for macOS — plan and current state
 
-Updated: 2026-11-16
+Updated: 2026-11-17
 Fork: https://github.com/ltillegal/rvc-macos-sequoia
 Local checkout: `~/RVC-WebUI-MacOS` (Omarchy / Arch Linux)
 Target: macOS 13+ on Apple Silicon, developed against Sequoia
