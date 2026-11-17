@@ -17,7 +17,8 @@ Russian version: [README.ru.md](README.ru.md)
 
 ## What's fixed in this fork
 
-- English UI by default - auto-detects system locale, falls back to en_US instead of hardcoded zh_CN
+- English-only repository and UI - the i18n keys are the English text, the shipped
+  locales are en, es, fr, it, pt, ru and tr, and everything else falls back to English
 - Removed pyenv dependency - run.sh and run-realtime.sh use Homebrew Python 3.11 with configurable PYTHON_BIN
 - Fixed fairseq / omegaconf conflict - aria2 python wrapper commented out, works with pip<24.1
 - Tested on macOS Sequoia (Apple Silicon: M1/M2/M3/M4)
@@ -39,8 +40,10 @@ PyTorch 2.4.0 and the requirements, and downloads the pretrained models. First
 launch takes 10–30 minutes and ~4 GB of disk; later launches open the UI
 immediately. The UI listens on `127.0.0.1` only.
 
-The build is not notarized, so macOS may complain on first launch — right-click
-the app → **Open**, or:
+Releases are notarized when the build has an Apple Developer ID certificate
+(`RVC_CODESIGN_IDENTITY` plus notarization credentials, see `plan.md`); those
+builds open without any workaround. The current ad-hoc signed builds make macOS
+complain on first launch — right-click the app → **Open**, or:
 
     xattr -dr com.apple.quarantine /Applications/RVC\ WebUI.app
 

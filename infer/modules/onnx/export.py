@@ -9,23 +9,23 @@ def export_onnx(ModelPath, ExportedPath):
     vec_channels = 256 if cpt.get("version", "v1") == "v1" else 768
 
     test_phone = torch.rand(1, 200, vec_channels)  # hidden unit
-    test_phone_lengths = torch.tensor([200]).long()  # hidden unit 长度（貌似没啥用）
-    test_pitch = torch.randint(size=(1, 200), low=5, high=255)  # 基频（单位赫兹）
-    test_pitchf = torch.rand(1, 200)  # nsf基频
-    test_ds = torch.LongTensor([0])  # 说话人ID
-    test_rnd = torch.rand(1, 192, 200)  # 噪声（加入随机因子）
+    test_phone_lengths = torch.tensor([200]).long()  # hidden-unit length (apparently unused)
+    test_pitch = torch.randint(size=(1, 200), low=5, high=255)  # fundamental frequency in Hz
+    test_pitchf = torch.rand(1, 200)  # nsf pitch
+    test_ds = torch.LongTensor([0])  # speaker id
+    test_rnd = torch.rand(1, 192, 200)  # noise (random factor)
 
-    device = "cpu"  # 导出时设备（不影响使用模型）
+    device = "cpu"  # device used for export; does not affect the exported model
 
     net_g = SynthesizerTrnMsNSFsidM(
         *cpt["config"], is_half=False, version=cpt.get("version", "v1")
-    )  # fp32导出（C++要支持fp16必须手动将内存重新排列所以暂时不用fp16）
+    )  # export as fp32; fp16 would need manual memory reordering on the C++ side
     net_g.load_state_dict(cpt["weight"], strict=False)
     input_names = ["phone", "phone_lengths", "pitch", "pitchf", "ds", "rnd"]
     output_names = [
         "audio",
     ]
-    # net_g.construct_spkmixmap(n_speaker) 多角色混合轨道导出
+    # net_g.construct_spkmixmap(n_speaker)  # multi-speaker mixed-track export
     torch.onnx.export(
         net_g,
         (

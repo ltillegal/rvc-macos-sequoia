@@ -19,15 +19,15 @@ Uma estrutura de conversão de voz fácil de usar baseada em VITS.<br><br>
 ------
 [**Changelog**](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/blob/main/docs/Changelog_EN.md) | [**FAQ (Frequently Asked Questions)**](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/wiki/FAQ-(Frequently-Asked-Questions)) 
 
-[**English**](../en/README.en.md) | [**中文简体**](../../README.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
+[**English**](../en/README.en.md) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
 
 
 Confira nosso [Vídeo de demonstração](https://www.bilibili.com/video/BV1pm4y1z7Gm/) aqui!
 
-Treinamento/Inferência WebUI：go-web.bat
+Treinamento/Inferência WebUI: go-web.bat
 ![Traduzido](https://github.com/RafaelGodoyEbert/Retrieval-based-Voice-Conversion-WebUI/assets/78083427/0b894d87-565a-432c-8b5b-45e4a65d5d17)
 
-GUI de conversão de voz em tempo real：go-realtime-gui.bat
+GUI de conversão de voz em tempo real: go-realtime-gui.bat
 ![image](https://github.com/RafaelGodoyEbert/Retrieval-based-Voice-Conversion-WebUI/assets/78083427/d172e3e5-35f4-4876-9530-c28246919e9e)
 
 
@@ -82,7 +82,7 @@ Você também pode usar pip para instalá-los:
 for Nvidia graphics cards
   pip install -r requirements.txt
 
-for AMD/Intel graphics cards on Windows (DirectML)：
+for AMD/Intel graphics cards on Windows (DirectML):
   pip install -r requirements-dml.txt
 
 for Intel ARC graphics cards on Linux / WSL using Python 3.10: 

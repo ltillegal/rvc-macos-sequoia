@@ -33,10 +33,10 @@ Failed experiments:
 - ~~Feature retrieval: add PCAR dimensionality reduction: searching is even slower~~
 - ~~Random data augmentation when training: not effective~~
 
-todolist：
+todolist:
 - ~~Vocos-RVC (tiny vocoder): not effective~~
-- ~~Crepe support for training：replaced by RMVPE~~
-- ~~Half precision crepe inference：replaced by RMVPE. And hard to achive.~~
+- ~~Crepe support for training: replaced by RMVPE~~
+- ~~Half precision crepe inference: replaced by RMVPE. And hard to achieve.~~
 - F0 editor support
 
 ### 2023-05-28
@@ -84,7 +84,7 @@ History changelogs:
 - Added local real-time voice changing mini-GUI, start by double-clicking go-realtime-gui.bat
 - Applied filtering for frequency bands below 50Hz during training and inference
 - Lowered the minimum pitch extraction of pyworld from the default 80 to 50 for training and inference, allowing male low-pitched voices between 50-80Hz not to be muted
-- WebUI supports changing languages according to system locale (currently supporting en_US, ja_JP, zh_CN, zh_HK, zh_SG, zh_TW; defaults to en_US if not supported)
+- WebUI supports changing languages according to system locale (currently supporting en_US, es_ES, fr_FR, it_IT, pt_BR, ru_RU, tr_TR; defaults to en_US if not supported)
 - Fixed recognition of some GPUs (e.g., V100-16G recognition failure, P4 recognition failure)
 
 ### 2023-04-28 Update

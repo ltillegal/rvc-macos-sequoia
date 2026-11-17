@@ -76,7 +76,7 @@ class FeatureInput(object):
             printt("no-f0-todo")
         else:
             printt("todo-f0-%s" % len(paths))
-            n = max(len(paths) // 5, 1)  # 每个进程最多打印5条
+            n = max(len(paths) // 5, 1)  # print at most five entries per process
             for idx, (inp_path, opt_path1, opt_path2) in enumerate(paths):
                 try:
                     if idx % n == 0:

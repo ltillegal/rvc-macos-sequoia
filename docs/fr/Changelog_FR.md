@@ -79,7 +79,7 @@ Historique des changelogs:
 - Ajout d'une mini-interface graphique pour le changement de voix en temps réel, démarrage par double-clic sur go-realtime-gui.bat
 - Application d'un filtrage pour les bandes de fréquences inférieures à 50Hz pendant l'entraînement et l'inférence
 - Abaissement de l'extraction de hauteur minimale de pyworld du défaut 80 à 50 pour l'entraînement et l'inférence, permettant aux voix masculines graves entre 50-80Hz de ne pas être mises en sourdine
-- WebUI prend en charge le changement de langue en fonction des paramètres régionaux du système (prise en charge actuelle de en_US, ja_JP, zh_CN, zh_HK, zh_SG, zh_TW ; défaut à en_US si non pris en charge)
+- WebUI prend en charge le changement de langue en fonction des paramètres régionaux du système (prise en charge actuelle de en_US, es_ES, fr_FR, it_IT, pt_BR, ru_RU, tr_TR ; défaut à en_US si non pris en charge)
 - Correction de la reconnaissance de certains GPU (par exemple, échec de reconnaissance V100-16G, échec de reconnaissance P4)
 
 ### 2023-04-28 Mise à jour

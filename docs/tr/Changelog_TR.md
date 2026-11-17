@@ -60,7 +60,7 @@ Yapılacaklar listesi:
  amplitüdlü gürültü" sorununu hafifletebilir. Giriş sesi arka plan gürültüsü yüksekse, açık olması önerilmez ve varsayılan olarak açık değildir (1 varsayılan olarak kapalı olarak kabul edilir)
 - Belirli bir frekansta filtreleme uygulama eğitim ve çıkarım için 50Hz'nin altındaki frekans bantları için
 - Pyworld'un varsayılan 80'den 50'ye minimum ton çıkarma sınırlamasını eğitim ve çıkarım için düşürme, 50-80Hz arasındaki erkek alçak seslerin sessizleştirilmemesine izin verme
-- WebUI, sistem yereli diline göre dil değiştirme (şu anda en_US, ja_JP, zh_CN, zh_HK, zh_SG, zh_TW'yi destekliyor; desteklenmeyen durumda varsayılan olarak en_US'ye geçer)
+- WebUI, sistem yereli diline göre dil değiştirme (şu anda en_US, es_ES, fr_FR, it_IT, pt_BR, ru_RU, tr_TR'yi destekliyor; desteklenmeyen durumda varsayılan olarak en_US'ye geçer)
 - Belirli bir giriş sesi yolunu kullanırken harvest tonunu önbelleğe alma (amaç: harvest ton çıkarma kullanırken, tüm işlem hattı uzun ve tekrarlayan bir ton çıkarma süreci geçirecektir. Önbellekleme kullanılmazsa, farklı timbre, indeks ve ton ortanca filtreleme yarıçapı ayarlarıyla deney yapan kullanıcılar, ilk çıkarım sonrası çok acı verici bir bekleme süreci yaşayacaktır)
 
 ### 2023-04-09 Güncellemesi
@@ -76,7 +76,7 @@ Yapılacaklar listesi:
 - Yerel gerçek zamanlı ses değiştirme mini-GUI'si ekleme, çift tıklayarak go-realtime-gui.bat ile başlayın
 - Eğitim ve çıkarım sırasında 50Hz'nin altındaki frekans bantlarını filtreleme uygulama
 - Pyworld'deki varsayılan 80'den 50'ye minimum ton çıkarma sınırlamasını eğitim ve çıkarım için düşürme, 50-80Hz arasındaki erkek alçak seslerin sessizleştirilmemesine izin verme
-- WebUI, sistem yereli diline göre dil değiştirme (şu anda en_US, ja_JP, zh_CN, zh_HK, zh_SG, zh_TW'yi destekliyor; desteklenmeyen durumda varsayılan olarak en_US'ye geçer)
+- WebUI, sistem yereli diline göre dil değiştirme (şu anda en_US, es_ES, fr_FR, it_IT, pt_BR, ru_RU, tr_TR'yi destekliyor; desteklenmeyen durumda varsayılan olarak en_US'ye geçer)
 - Bazı GPU'ların tanınmasını düzeltme (örneğin, V100-16G tanınmama sorunu, P4 tanınmama sorunu)
 
 ### 2023-04-28 Güncellemesi

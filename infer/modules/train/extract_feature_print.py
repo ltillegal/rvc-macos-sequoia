@@ -99,7 +99,7 @@ if is_half:
 model.eval()
 
 todo = sorted(list(os.listdir(wavPath)))[i_part::n_part]
-n = max(1, len(todo) // 10)  # 最多打印十条
+n = max(1, len(todo) // 10)  # print at most ten entries
 if len(todo) == 0:
     printt("no-feature-todo")
 else:

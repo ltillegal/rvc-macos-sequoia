@@ -16,7 +16,7 @@ An easy-to-use Voice Conversion framework based on VITS.<br><br>
 
 [**Changelog**](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/blob/main/docs/Changelog_EN.md) | [**FAQ (Frequently Asked Questions)**](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/wiki/FAQ-(Frequently-Asked-Questions)) 
 
-[**English**](../en/README.en.md) | [**中文简体**](../../README.md) | [**日本語**](../jp/README.ja.md) | [**한국어**](../kr/README.ko.md) ([**韓國語**](../kr/README.ko.han.md)) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
+[**English**](../en/README.en.md) | [**Français**](../fr/README.fr.md) | [**Türkçe**](../tr/README.tr.md) | [**Português**](../pt/README.pt.md)
 
 </div>
 
@@ -91,7 +91,7 @@ You can also use pip to install them:
 for Nvidia graphics cards
   pip install -r requirements.txt
 
-for AMD/Intel graphics cards on Windows (DirectML)：
+for AMD/Intel graphics cards on Windows (DirectML):
   pip install -r requirements-dml.txt
 
 for Intel ARC graphics cards on Linux / WSL using Python 3.10: 
