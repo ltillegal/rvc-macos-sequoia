@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U">
+  <a href="https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U?locale.x=en_US&country.x=US">
     <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal" height="40">
   </a>
 </p>
@@ -265,9 +265,9 @@ MIT
 Если форк сэкономил вам время, можно угостить меня кофе:
 
 <p>
-  <a href="https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U">
+  <a href="https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U?locale.x=en_US&country.x=US">
     <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal" height="40">
   </a>
 </p>
 
-PayPal: [Donate](https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U)
+PayPal: [Donate](https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U?locale.x=en_US&country.x=US)
