@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.paypal.com/donate/?business=0eskimo0%40gmail.com&no_recurring=0&item_name=Support+RVC-WebUI-MacOS&currency_code=USD">
+  <a href="https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U">
     <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal" height="40">
   </a>
 </p>
@@ -265,9 +265,9 @@ MIT
 If this fork saves you time, you can buy me a coffee:
 
 <p>
-  <a href="https://www.paypal.com/donate/?business=0eskimo0%40gmail.com&no_recurring=0&item_name=Support+RVC-WebUI-MacOS&currency_code=USD">
+  <a href="https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U">
     <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal" height="40">
   </a>
 </p>
 
-PayPal: [0eskimo0@gmail.com](https://www.paypal.com/donate/?business=0eskimo0%40gmail.com&no_recurring=0&item_name=Support+RVC-WebUI-MacOS&currency_code=USD)
+PayPal: [Donate](https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U)

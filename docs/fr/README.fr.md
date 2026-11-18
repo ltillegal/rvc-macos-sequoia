@@ -176,3 +176,15 @@ python infer-web.py
 <a href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/graphs/contributors" target="_blank">
   <img src="https://contrib.rocks/image?repo=RVC-Project/Retrieval-based-Voice-Conversion-WebUI" />
 </a>
+
+---
+
+## Support the project
+
+If this fork saves you time, you can support it with PayPal:
+
+<p align="center">
+  <a href="https://www.paypal.com/ncp/payment/MAMKZM5TTVN5U">
+    <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate with PayPal" height="40">
+  </a>
+</p>
