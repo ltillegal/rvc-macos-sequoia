@@ -58,16 +58,6 @@ pip install torch torchvision torchaudio
 #pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
 ```
 
-Sonra poetry kullanarak diğer bağımlılıkları kurabilirsiniz:
-```bash
-# Poetry bağımlılık yönetim aracını kurun, zaten kuruluysa atlayın
-# Referans: https://python-poetry.org/docs/#installation
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Projeyi bağımlılıkları kurun
-poetry install
-```
-
 Ayrıca bunları pip kullanarak da kurabilirsiniz:
 ```bash
 

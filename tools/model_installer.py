@@ -39,6 +39,42 @@ def _atomic_copy(src, dst_dir, name):
     return dst
 
 
+def _safe_destination(target_root, member_name):
+    """Return a verified absolute destination for one ZIP member."""
+    normalized = member_name.replace("\\", "/")
+    has_drive = len(normalized) >= 2 and normalized[0].isalpha() and normalized[1] == ":"
+
+    if not normalized or normalized.startswith("/") or has_drive:
+        raise ValueError(f"unsafe path in archive: {member_name!r}")
+
+    parts = [part for part in normalized.split("/") if part not in ("", ".")]
+    if not parts or ".." in parts:
+        raise ValueError(f"unsafe path in archive: {member_name!r}")
+
+    destination = os.path.realpath(os.path.join(target_root, *parts))
+    if os.path.commonpath((target_root, destination)) != target_root:
+        raise ValueError(f"unsafe path in archive: {member_name!r}")
+    return destination
+
+
+def _safe_extract(z, target_root):
+    """Extract a ZIP without allowing paths outside target_root."""
+    seen = set()
+    for member in z.infolist():
+        destination = _safe_destination(target_root, member.filename)
+        if destination in seen:
+            raise ValueError(f"duplicate path in archive: {member.filename!r}")
+        seen.add(destination)
+
+        if member.is_dir():
+            os.makedirs(destination, exist_ok=True)
+            continue
+
+        os.makedirs(os.path.dirname(destination), exist_ok=True)
+        with z.open(member) as source, open(destination, "wb") as target:
+            shutil.copyfileobj(source, target)
+
+
 def install_model_from_zip(zip_path):
     """
     Accept a ZIP path (str) or a Gradio gr.File object (dict / .name),
@@ -70,9 +106,11 @@ def install_model_from_zip(zip_path):
     with tempfile.TemporaryDirectory() as tmpdir:
         try:
             with zipfile.ZipFile(zip_path, "r") as z:
-                z.extractall(tmpdir)
+                _safe_extract(z, os.path.realpath(tmpdir))
         except zipfile.BadZipFile:
             return "Error: invalid ZIP file"
+        except ValueError as exc:
+            return f"Error: unsafe ZIP: {exc}"
 
         # Collect the candidates first, without writing anything to disk.
         pth_files = []

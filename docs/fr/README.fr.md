@@ -58,16 +58,6 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.4.2
 ```
 
-Vous pouvez utiliser poetry pour installer les dépendances :
-```bash
-# Installez l'outil de gestion des dépendances Poetry, sautez si déjà installé.
-# Voir : https://python-poetry.org/docs/#installation
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Installez les dépendances avec poetry.
-poetry install
-```
-
 Ou vous pouvez utiliser pip pour installer les dépendances :
 ```bash
 # Cartes Nvidia :

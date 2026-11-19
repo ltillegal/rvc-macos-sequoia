@@ -123,6 +123,29 @@ class InstallerIsolatedTest(unittest.TestCase):
             leftovers = [n for n in self._ls(d) if n.startswith(".install_")]
             self.assertEqual(leftovers, [], f"tmp leftovers in {d}: {leftovers}")
 
+    def test_parent_traversal_rejected(self):
+        zp = self.tmp / "traversal.zip"
+        make_zip(zp, {"../escaped.pth": b"BAD"})
+        msg = install_model_from_zip(str(zp))
+        self.assertTrue(msg.startswith("Error: unsafe ZIP:"), msg)
+        self.assertFalse((self.tmp / "escaped.pth").exists())
+        self.assertEqual(self._ls(self.weights), [])
+
+    def test_absolute_path_rejected(self):
+        escaped = self.tmp / "absolute.pth"
+        zp = self.tmp / "absolute.zip"
+        make_zip(zp, {str(escaped): b"BAD"})
+        msg = install_model_from_zip(str(zp))
+        self.assertTrue(msg.startswith("Error: unsafe ZIP:"), msg)
+        self.assertFalse(escaped.exists())
+
+    def test_duplicate_path_rejected(self):
+        zp = self.tmp / "duplicate.zip"
+        make_zip(zp, {"a.pth": b"A", "./a.pth": b"B"})
+        msg = install_model_from_zip(str(zp))
+        self.assertTrue(msg.startswith("Error: unsafe ZIP:"), msg)
+        self.assertEqual(self._ls(self.weights), [])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
