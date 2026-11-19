@@ -75,17 +75,7 @@ pip install torch torchvision torchaudio
 #pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.4.2
 ```
 
-Then can use poetry to install the other dependencies:
-```bash
-# Install the Poetry dependency management tool, skip if installed
-# Reference: https://python-poetry.org/docs/#installation
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Install the project dependencies
-poetry install
-```
-
-You can also use pip to install them:
+You can use pip to install them:
 ```bash
 
 for Nvidia graphics cards
@@ -100,6 +90,9 @@ for Intel ARC graphics cards on Linux / WSL using Python 3.10:
 for AMD graphics cards on Linux (ROCm):
   pip install -r requirements-amd.txt
 ```
+
+The upstream `pyproject.toml` and `poetry.lock` are legacy metadata kept for
+reference only; this fork installs through `requirements.txt` or the `.dmg`.
 
 ------
 Mac users can install dependencies via `run.sh`:

@@ -1,3 +1,5 @@
+# Legacy upstream metadata kept for reference. This fork installs through
+# requirements.txt / requirements.lock.txt on Python 3.11; see README.md.
 [tool.poetry]
 name = "rvc-beta"
 version = "0.1.0"

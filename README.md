@@ -69,6 +69,9 @@ so upgrading means installing a newer `.dmg`.
     pip install torch==2.4.0 torchvision==0.19.0 torchaudio==2.4.0
     pip install -r requirements.txt
 
+The upstream `pyproject.toml` and `poetry.lock` are legacy metadata kept for
+reference only; this fork installs through `requirements.txt` or the `.dmg`.
+
     python infer-web.py
 
 Open http://127.0.0.1:7865 in your browser.

@@ -32,7 +32,11 @@ done; this file only summarises the shape of the project and the open tasks.
   dependencies, creates the environment, downloads the models and starts the
   WebUI.
 - A ZIP model installer in the UI, atomic writes, and `change_choices()`
-  refreshes the model dropdown after an install.
+  refreshes the model dropdown after an install. Archive paths are validated
+  before extraction, with unit tests for traversal, absolute paths and
+  duplicate members.
+- Poetry metadata is kept only as legacy upstream reference; docs and installs
+  use `requirements.txt` / the `.dmg`.
 
 ## Repository layout
 
@@ -46,7 +50,7 @@ done; this file only summarises the shape of the project and the open tasks.
 | `.github/workflows/release.yml` | Build and smoke-test on PRs, dry-run the first launch, publish on tags |
 | `.github/workflows/lock.yml` | Regenerates `requirements.lock.txt` on `macos-latest` |
 | `.github/workflows/verify.yml` | Installs the lockfile, imports the stack and boots the WebUI on `macos-latest` |
-| `.github/workflows/lint.yml` | Runs the cheap always-on checks (currently `tools/check_cjk.py`) on every push |
+| `.github/workflows/lint.yml` | Runs cheap always-on checks (CJK, Python/shell syntax, YAML/JSON, donation/Poetry guards, installer tests) on every push and pull request |
 | `docs/en/` | The only docs that ship inside the bundle; the FAQ tab reads `docs/en/faq_en.md` |
 
 ## Installer flow
@@ -79,8 +83,9 @@ Environment flags used by CI and debugging:
 - `release.yml` runs on every pull request: it builds the `.dmg`, opens it,
   checks the bundle layout and the embedded version, verifies the signature and
   runs the launcher with `RVC_DRY_RUN=1` on macOS.
-- `lint.yml` runs `tools/check_cjk.py` on every push and pull request, so CJK
-  text cannot come back unnoticed.
+- `lint.yml` runs CJK, Python/shell syntax, YAML/JSON, donation-link, stale-Poetry
+  and installer-unit-test checks on every push and pull request, so regressions
+  are caught before a macOS runner is used.
 - Tags matching `v*` publish `RVC-WebUI-<version>-macos.dmg` plus a `.sha256`
   that verifies from the download directory with
   `shasum -a 256 -c RVC-WebUI-<version>-macos.dmg.sha256`.
@@ -134,6 +139,10 @@ available. The ad-hoc path is exercised by every pull request.
 - [X] Migrate to Python 3.11: `numba` 0.58.1, `llvmlite` 0.41.1,
       `pyworld` 0.3.5 and a commit-pinned `fairseq` fork. `python@3.10` is
       deprecated and will be disabled on 2027-10-01.
+- [X] Harden the ZIP model installer against path traversal and replace stale
+      Poetry installation instructions with the actual `requirements.txt` flow.
+- [X] Expand the cheap lint checks and verify the release checksum during the
+      DMG build.
 - [ ] Notarize the app once an Apple Developer account exists. The scaffolding
       is in `build-dmg.sh` and `release.yml` and is gated on the secrets above;
       until then macOS needs right-click -> Open, or

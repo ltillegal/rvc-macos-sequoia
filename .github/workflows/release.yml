@@ -76,6 +76,13 @@ jobs:
           bash packaging/build-dmg.sh --version "$VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Verify checksum
+        env:
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          cd dist
+          shasum -a 256 -c "RVC-WebUI-${VERSION}-macos.dmg.sha256"
+
       - name: Smoke test the bundle
         env:
           VERSION: ${{ steps.build.outputs.version }}
